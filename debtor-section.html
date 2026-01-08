@@ -1,0 +1,316 @@
+<!-- ==================== قسم المدينون والدائنون ==================== -->
+<section id="debtor" class="section" style="display:none">
+    <div style="background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:white;padding:30px;border-radius:16px;margin-bottom:30px;box-shadow:0 10px 30px rgba(102,126,234,0.3)">
+        <h2 style="margin:0;font-size:2.2em;font-weight:900">💳 نظام الدائن والمدين</h2>
+        <p style="margin:10px 0 0 0;opacity:0.95">إدارة شاملة لجميع أنواع الديون والدائنين</p>
+    </div>
+
+    <!-- الإحصائيات الرئيسية -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;margin-bottom:30px">
+        <div style="background:white;padding:20px;border-radius:12px;border-right:5px solid #e74c3c;box-shadow:0 4px 15px rgba(0,0,0,0.08)">
+            <div style="font-size:0.9em;color:#7f8c8d;margin-bottom:8px">💰 إجمالي الديون المستحقة</div>
+            <div style="font-size:2.2em;font-weight:900;color:#2c3e50" id="totalReceivables">0</div>
+        </div>
+        <div style="background:white;padding:20px;border-radius:12px;border-right:5px solid #27ae60;box-shadow:0 4px 15px rgba(0,0,0,0.08)">
+            <div style="font-size:0.9em;color:#7f8c8d;margin-bottom:8px">📋 إجمالي الديون على الشركة</div>
+            <div style="font-size:2.2em;font-weight:900;color:#2c3e50" id="totalPayables">0</div>
+        </div>
+        <div style="background:white;padding:20px;border-radius:12px;border-right:5px solid #3498db;box-shadow:0 4px 15px rgba(0,0,0,0.08)">
+            <div style="font-size:0.9em;color:#7f8c8d;margin-bottom:8px">⚖️ الرصيد الصافي</div>
+            <div style="font-size:2.2em;font-weight:900;color:#2c3e50" id="netPosition">0</div>
+        </div>
+        <div style="background:white;padding:20px;border-radius:12px;border-right:5px solid #f39c12;box-shadow:0 4px 15px rgba(0,0,0,0.08)">
+            <div style="font-size:0.9em;color:#7f8c8d;margin-bottom:8px">🚨 الديون المتأخرة</div>
+            <div style="font-size:2.2em;font-weight:900;color:#e74c3c" id="overdueAmount">0</div>
+        </div>
+    </div>
+
+    <!-- الألسنة (Tabs) -->
+    <div style="margin-bottom:25px;border-bottom:2px solid #ecf0f1">
+        <button class="tab-button active" onclick="switchDebtTab('overview')" style="padding:15px 25px;border:none;background:transparent;color:#2c3e50;font-weight:600;cursor:pointer;border-bottom:3px solid #667eea;font-size:1em">📊 النظرة العامة</button>
+        <button class="tab-button" onclick="switchDebtTab('create')" style="padding:15px 25px;border:none;background:transparent;color:#7f8c8d;font-weight:600;cursor:pointer;border-bottom:3px solid transparent;font-size:1em;transition:all 0.3s">➕ إضافة دين</button>
+        <button class="tab-button" onclick="switchDebtTab('list')" style="padding:15px 25px;border:none;background:transparent;color:#7f8c8d;font-weight:600;cursor:pointer;border-bottom:3px solid transparent;font-size:1em;transition:all 0.3s">📋 قائمة الديون</button>
+        <button class="tab-button" onclick="switchDebtTab('analytics')" style="padding:15px 25px;border:none;background:transparent;color:#7f8c8d;font-weight:600;cursor:pointer;border-bottom:3px solid transparent;font-size:1em;transition:all 0.3s">📈 التحليلات</button>
+    </div>
+
+    <!-- النظرة العامة (Overview) -->
+    <div id="debtOverview" class="debt-section">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:25px;margin-bottom:30px">
+            <!-- نوع الديون -->
+            <div style="background:white;padding:25px;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.08)">
+                <h3 style="margin:0 0 20px 0;color:#2c3e50;font-size:1.3em">📊 توزيع الديون حسب النوع</h3>
+                <div id="debtTypeChart"></div>
+            </div>
+            <!-- حالات الديون -->
+            <div style="background:white;padding:25px;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.08)">
+                <h3 style="margin:0 0 20px 0;color:#2c3e50;font-size:1.3em">⏱️ توزيع الديون حسب الحالة</h3>
+                <div id="debtStatusChart"></div>
+            </div>
+        </div>
+
+        <!-- الديون المتأخرة -->
+        <div style="background:white;padding:25px;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.08);margin-bottom:25px">
+            <h3 style="margin:0 0 20px 0;color:#e74c3c;font-size:1.3em">🚨 الديون المتأخرة</h3>
+            <div id="overdueDebtsList"></div>
+        </div>
+
+        <!-- تحليل عمر الديون -->
+        <div style="background:white;padding:25px;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.08)">
+            <h3 style="margin:0 0 20px 0;color:#2c3e50;font-size:1.3em">📅 تحليل عمر الديون</h3>
+            <div id="debtAgeAnalysisChart"></div>
+        </div>
+    </div>
+
+    <!-- إضافة دين جديد (Create) -->
+    <div id="debtCreate" class="debt-section" style="display:none">
+        <div style="background:white;padding:30px;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.08)">
+            <h3 style="margin:0 0 25px 0;color:#2c3e50;font-size:1.5em">➕ إضافة دين جديد</h3>
+            
+            <form id="createDebtForm" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px">
+                <!-- النوع -->
+                <div class="form-group">
+                    <label style="font-weight:600;color:#2c3e50;margin-bottom:8px;display:block">نوع الدين</label>
+                    <select id="debtType" required style="width:100%;padding:12px;border-radius:10px;border:2px solid #ecf0f1;font-size:1em">
+                        <option value="">اختر نوع الدين</option>
+                        <option value="ClientDebt">💰 ديون العملاء</option>
+                        <option value="VendorPayable">📦 ديون الموردين</option>
+                        <option value="EmployeeSalary">👔 رواتب الموظفين</option>
+                        <option value="LoanPayable">🏦 قروض على الشركة</option>
+                        <option value="LoanReceivable">💳 قروض معطاة</option>
+                        <option value="Other">❓ أخرى</option>
+                    </select>
+                </div>
+
+                <!-- الاسم -->
+                <div class="form-group">
+                    <label style="font-weight:600;color:#2c3e50;margin-bottom:8px;display:block">اسم الدين</label>
+                    <input type="text" id="debtName" required placeholder="مثال: دين علي محمد" style="width:100%;padding:12px;border-radius:10px;border:2px solid #ecf0f1;font-size:1em">
+                </div>
+
+                <!-- المبلغ الكلي -->
+                <div class="form-group">
+                    <label style="font-weight:600;color:#2c3e50;margin-bottom:8px;display:block">المبلغ الكلي</label>
+                    <input type="number" id="debtAmount" required min="0" step="1" placeholder="0" style="width:100%;padding:12px;border-radius:10px;border:2px solid #ecf0f1;font-size:1em">
+                </div>
+
+                <!-- الموكل (اختياري) -->
+                <div class="form-group">
+                    <label style="font-weight:600;color:#2c3e50;margin-bottom:8px;display:block">الموكل (اختياري)</label>
+                    <select id="debtClient" style="width:100%;padding:12px;border-radius:10px;border:2px solid #ecf0f1;font-size:1em">
+                        <option value="">لا يوجد</option>
+                    </select>
+                </div>
+
+                <!-- تاريخ الاستحقاق -->
+                <div class="form-group">
+                    <label style="font-weight:600;color:#2c3e50;margin-bottom:8px;display:block">تاريخ الاستحقاق</label>
+                    <input type="date" id="debtDueDate" style="width:100%;padding:12px;border-radius:10px;border:2px solid #ecf0f1;font-size:1em">
+                </div>
+
+                <!-- الملاحظات -->
+                <div class="form-group" style="grid-column:1 / -1">
+                    <label style="font-weight:600;color:#2c3e50;margin-bottom:8px;display:block">الملاحظات</label>
+                    <textarea id="debtNotes" placeholder="أضف أي ملاحظات إضافية..." style="width:100%;padding:12px;border-radius:10px;border:2px solid #ecf0f1;font-size:1em;min-height:100px;resize:vertical"></textarea>
+                </div>
+
+                <!-- الأزرار -->
+                <div style="grid-column:1 / -1;display:flex;gap:15px;margin-top:10px">
+                    <button type="submit" class="btn-primary" style="flex:1;padding:14px;background:linear-gradient(135deg,#667eea,#764ba2);border:none;border-radius:10px;color:white;font-weight:700;cursor:pointer;font-size:1.05em">💾 حفظ الدين</button>
+                    <button type="reset" class="btn-secondary" style="flex:1;padding:14px;background:#ecf0f1;border:none;border-radius:10px;color:#2c3e50;font-weight:700;cursor:pointer;font-size:1.05em">🔄 إعادة تعيين</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- قائمة الديون (List) -->
+    <div id="debtList" class="debt-section" style="display:none">
+        <div style="background:white;padding:25px;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.08)">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:25px">
+                <h3 style="margin:0;color:#2c3e50;font-size:1.5em">📋 قائمة جميع الديون</h3>
+                <div style="display:flex;gap:10px">
+                    <select id="debtFilterType" style="padding:10px;border-radius:8px;border:2px solid #ecf0f1" onchange="filterDebts()">
+                        <option value="">جميع الأنواع</option>
+                        <option value="ClientDebt">ديون العملاء</option>
+                        <option value="VendorPayable">ديون الموردين</option>
+                        <option value="EmployeeSalary">رواتب الموظفين</option>
+                        <option value="LoanPayable">القروض</option>
+                    </select>
+                    <select id="debtFilterStatus" style="padding:10px;border-radius:8px;border:2px solid #ecf0f1" onchange="filterDebts()">
+                        <option value="">جميع الحالات</option>
+                        <option value="Active">نشطة</option>
+                        <option value="Overdue">متأخرة</option>
+                        <option value="PartiallyPaid">مسددة جزئياً</option>
+                        <option value="Paid">مسددة</option>
+                    </select>
+                    <input type="text" id="debtSearchBox" placeholder="🔍 بحث..." style="padding:10px;border-radius:8px;border:2px solid #ecf0f1;width:200px" onkeyup="filterDebts()">
+                </div>
+            </div>
+            <div id="debtTableContainer"></div>
+        </div>
+    </div>
+
+    <!-- التحليلات (Analytics) -->
+    <div id="debtAnalytics" class="debt-section" style="display:none">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:25px;margin-bottom:30px">
+            <!-- نسبة التحصيل -->
+            <div style="background:white;padding:25px;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.08)">
+                <h3 style="margin:0 0 20px 0;color:#2c3e50;font-size:1.3em">📊 نسبة التحصيل</h3>
+                <div id="collectionRateChart"></div>
+            </div>
+            <!-- الديون حسب النوع -->
+            <div style="background:white;padding:25px;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.08)">
+                <h3 style="margin:0 0 20px 0;color:#2c3e50;font-size:1.3em">📈 توزيع المتبقي حسب النوع</h3>
+                <div id="debtBreakdownChart"></div>
+            </div>
+        </div>
+
+        <!-- جدول التحليلات -->
+        <div style="background:white;padding:25px;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.08)">
+            <h3 style="margin:0 0 20px 0;color:#2c3e50;font-size:1.3em">📋 التفاصيل التحليلية</h3>
+            <div style="overflow-x:auto">
+                <table style="width:100%;border-collapse:collapse">
+                    <thead>
+                        <tr style="background:#f8f9fa;border-bottom:2px solid #ecf0f1">
+                            <th style="padding:15px;text-align:right;font-weight:600;color:#2c3e50">المقياس</th>
+                            <th style="padding:15px;text-align:right;font-weight:600;color:#2c3e50">القيمة</th>
+                        </tr>
+                    </thead>
+                    <tbody id="analyticsTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== نمط CSS مخصص للديون ==================== -->
+<style>
+.debt-section {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.debt-item {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    border-right: 4px solid #667eea;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+}
+
+.debt-item:hover {
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+    transform: translateY(-2px);
+}
+
+.debt-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 12px;
+}
+
+.debt-item-title {
+    font-weight: 700;
+    color: #2c3e50;
+    font-size: 1.1em;
+}
+
+.debt-item-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: 600;
+}
+
+.debt-item-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 12px;
+    font-size: 0.95em;
+}
+
+.debt-item-detail {
+    display: flex;
+    justify-content: space-between;
+}
+
+.debt-item-detail-label {
+    color: #7f8c8d;
+}
+
+.debt-item-detail-value {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.debt-progress-bar {
+    background: #ecf0f1;
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 10px 0;
+}
+
+.debt-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    transition: width 0.3s ease;
+}
+
+.debt-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.debt-action-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    font-size: 0.9em;
+}
+
+.debt-action-btn.edit {
+    background: #3498db;
+    color: white;
+}
+
+.debt-action-btn.edit:hover {
+    background: #2980b9;
+}
+
+.debt-action-btn.pay {
+    background: #27ae60;
+    color: white;
+}
+
+.debt-action-btn.pay:hover {
+    background: #229954;
+}
+
+.debt-action-btn.delete {
+    background: #e74c3c;
+    color: white;
+}
+
+.debt-action-btn.delete:hover {
+    background: #c0392b;
+}
+</style>
