@@ -1,5 +1,9 @@
-// ⚖️ نظام إدارة المحامين v7.0 Financial System
-console.log('🚀 تحميل النظام v7.0...');
+// ⚖️ نظام إدارة المحامين v8.0 Financial System - Optimized
+console.log('🚀 تحميل النظام v8.0 - محسّن...');
+
+// ==================== Performance Optimization ====================
+const sectionCache = new Map();
+let currentSectionId = 'dashboard';
 
 // ==================== API Configuration ====================
 const API_BASE_URL = 'http://localhost:5088/api';
@@ -743,33 +747,35 @@ function logout() {
 
 // ==================== التنقل ====================
 function showSection(sectionId) {
-    // التمرير الفوري للأعلى
-    const mainContent = document.querySelector('.main-content');
-    if (mainContent) {
-        mainContent.scrollTop = 0;
-        mainContent.scrollTo(0, 0);
-    }
-    window.scrollTo(0, 0);
+    console.log(`📍 الانتقال إلى قسم: ${sectionId}`);
     
-    // إخفاء جميع الأقسام وإلغاء تفعيل الأزرار
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    // 1. إخفاء جميع الأقسام بسرعة
+    document.querySelectorAll('.section').forEach(s => {
+        s.classList.remove('active');
+        s.style.display = 'none';
+    });
+    
+    // 2. إلغاء تفعيل جميع أزرار الملاحة
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     
-    // إظهار القسم المطلوب وتفعيل زره
+    // 3. إظهار القسم المطلوب فوراً
     const targetSection = document.getElementById(sectionId);
     if (targetSection) {
+        targetSection.style.display = 'block';
         targetSection.classList.add('active');
-        // التأكد من أن القسم في الأعلى
-        targetSection.style.marginTop = '0';
-        targetSection.style.paddingTop = '0';
+        console.log(`✅ تم عرض القسم: ${sectionId}`);
+    } else {
+        console.warn(`⚠️ لم يتم العثور على القسم: ${sectionId}`);
+        return;
     }
     
+    // 4. تفعيل زر الملاحة
     const navButton = document.querySelector(`[onclick="showSection('${sectionId}')"]`);
     if (navButton) {
         navButton.classList.add('active');
     }
     
-    // تحديث عنوان الصفحة
+    // 5. تحديث عنوان الصفحة
     const titles = {
         dashboard: 'لوحة التحكم',
         lawyers: 'إدارة المحامين',
@@ -787,17 +793,31 @@ function showSection(sectionId) {
         pageTitle.textContent = titles[sectionId] || '';
     }
     
-    // استخدام requestAnimationFrame للتأكد من تحديث DOM
-    requestAnimationFrame(() => {
-        if (mainContent) {
-            mainContent.scrollTop = 0;
-        }
-        
-        // تحديث البيانات حسب القسم
+    // 6. التمرير للأعلى
+    const mainContent = document.querySelector('.main-content');
+    if (mainContent) {
+        mainContent.scrollTop = 0;
+    }
+    window.scrollTo(0, 0);
+    
+    // 7. تحديث البيانات حسب القسم
+    setTimeout(() => {
         if (sectionId === 'dashboard') { updateDashboard(); updateLastUpdated('dashboard'); }
         if (sectionId === 'lawyers') { renderLawyers?.(); updateLastUpdated('lawyers'); }
         if (sectionId === 'cases') { renderCases?.(); updateLastUpdated('cases'); }
         if (sectionId === 'clients') { renderClients?.(); updateLastUpdated('clients'); }
+        if (sectionId === 'transactions') { renderTransactions?.(); updateLastUpdated('transactions'); }
+        if (sectionId === 'debtors') { renderDebtorsCreditors?.(); updateLastUpdated('debtors'); }
+        if (sectionId === 'reports') { renderReports?.(); updateLastUpdated('reports'); }
+        if (sectionId === 'settings') { applyCompactModeFromStorage?.(); }
+    }, 50);
+    
+    // 8. حفظ حالة القسم الحالي
+    currentSectionId = sectionId;
+    localStorage.setItem('lastSection', sectionId);
+    
+    console.log(`✅ تم الانتقال إلى قسم ${sectionId} بنجاح`);
+}
         if (sectionId === 'transactions') { renderTransactions?.(); updateLastUpdated('transactions'); }
         if (sectionId === 'debtors') { renderDebtorsCreditors(); /* last updated inside renderer */ }
         if (sectionId === 'settings') applyCurrencySettingsToUI();

@@ -41,6 +41,10 @@ node_modules/
 .env
 .env.local
 
+# Git credentials (DO NOT COMMIT)
+.git-credentials
+*.credentials
+
 # Logs
 *.log
 npm-debug.log*

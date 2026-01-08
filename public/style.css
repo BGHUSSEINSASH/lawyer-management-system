@@ -453,14 +453,16 @@ body {
 
 .section {
     display: none;
+    padding: 30px;
+    min-height: calc(100vh - 200px);
 }
 
 .section.active {
-    display: block;
-    animation: fadeIn 0.3s ease;
+    display: block !important;
+    animation: fadeInSection 0.25s ease-in-out;
 }
 
-@keyframes fadeIn {
+@keyframes fadeInSection {
     from {
         opacity: 0;
     }
