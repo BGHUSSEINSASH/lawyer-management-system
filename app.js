@@ -399,11 +399,21 @@ function showApp() {
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('mainApp').style.display = 'block';
     
+    // إزالة كلاس login-active من body
+    document.body.classList.remove('login-active');
+    
     document.getElementById('currentUserName').textContent = currentUser.name;
     document.getElementById('currentUserRole').textContent = getRoleName(currentUser.role);
-    document.getElementById('settingsName').value = currentUser.name;
-    document.getElementById('settingsEmail').value = currentUser.email;
-    document.getElementById('settingsRole').value = getRoleName(currentUser.role);
+    
+    // تحديث عناصر الإعدادات إذا كانت موجودة
+    const settingsName = document.getElementById('settingsName');
+    if (settingsName) settingsName.value = currentUser.name;
+    
+    const settingsEmail = document.getElementById('settingsEmail');
+    if (settingsEmail) settingsEmail.value = currentUser.email;
+    
+    const settingsRole = document.getElementById('settingsRole');
+    if (settingsRole) settingsRole.value = getRoleName(currentUser.role);
     
     // إخفاء الأقسام غير المصرح بها
     applyPermissions();
@@ -427,8 +437,8 @@ function applyPermissions() {
         if (useBackend && authToken) {
             const allowed = ['payment_from_client', 'payment_to_client', 'service_fee', 'expense'];
             const labelMap = {
-                'payment_from_client': 'دفعة من موكل',
-                'payment_to_client': 'دفعة لموكل',
+                'payment_from_client': 'دفعة من عميل',
+                'payment_to_client': 'دفعة لعميل',
                 'service_fee': 'رسوم خدمة',
                 'expense': 'مصروف عام/مرتبط'
             };
@@ -474,8 +484,12 @@ function applyPermissions() {
     // إظهار زر إدارة الصلاحيات للمدير فقط
     const permissionsNavBtn = document.getElementById('permissionsNavBtn');
     if (permissionsNavBtn) permissionsNavBtn.style.display = currentUser.role === 'admin' ? 'flex' : 'none';
+    
     const viewRestrictionsCard = document.getElementById('viewRestrictionsCard');
     if (viewRestrictionsCard) viewRestrictionsCard.style.display = currentUser.role === 'admin' ? 'block' : 'none';
+}
+
+// ==================== عرض تقييدات العرض ====================
 async function showViewRestrictionsModal() {
     let modules = [];
     if (useBackend && authToken) {
@@ -572,7 +586,6 @@ async function saveViewRestrictions(e) {
         showToast('⚠️ يتطلب الحفظ عبر الخادم', 'warning');
     }
 }
-}
 
 function generatePaymentUrl(clientName, amount, desc, caseNumber) {
     const tpl = database.paymentLinkTemplate || 'https://pay.example.com/invoice?client={client}&amount={amount}&desc={desc}&case={case}';
@@ -661,6 +674,10 @@ function logout() {
         document.getElementById('loginScreen').style.display = 'flex';
         document.getElementById('mainApp').style.display = 'none';
         document.getElementById('loginForm').reset();
+        
+        // إضافة كلاس login-active لـ body
+        document.body.classList.add('login-active');
+        
         showToast('👋 تم تسجيل الخروج بنجاح', 'success');
     }
 }
@@ -672,6 +689,9 @@ function showSection(sectionId) {
     
     document.getElementById(sectionId)?.classList.add('active');
     document.querySelector(`[onclick="showSection('${sectionId}')"]`)?.classList.add('active');
+    
+    // التمرير إلى الأعلى
+    document.querySelector('.main-content').scrollTop = 0;
     
     const titles = {
         dashboard: 'لوحة التحكم',
@@ -687,6 +707,9 @@ function showSection(sectionId) {
     
     document.getElementById('pageTitle').textContent = titles[sectionId] || '';
     
+    // إغلاق القائمة الجانبية على الموبايل
+    closeSidebarOnMobile();
+    
     if (sectionId === 'dashboard') updateDashboard();
     if (sectionId === 'debtors') renderDebtorsCreditors();
     if (sectionId === 'settings') applyCurrencySettingsToUI();
@@ -697,17 +720,45 @@ function toggleSidebarMenu() {
     const sidebar = document.getElementById('sidebar');
     const mainContent = document.querySelector('.main-content');
     
-    sidebar.classList.toggle('hidden');
-    mainContent.classList.toggle('sidebar-hidden');
+    // للشاشات الصغيرة - عرض/إخفاء القائمة
+    if (window.innerWidth <= 768) {
+        sidebar.classList.toggle('sidebar-hidden');
+        
+        // إضافة overlay للشاشات الصغيرة
+        let overlay = document.getElementById('sidebarOverlay');
+        if (!overlay && !sidebar.classList.contains('sidebar-hidden')) {
+            overlay = document.createElement('div');
+            overlay.id = 'sidebarOverlay';
+            overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:999;';
+            overlay.onclick = () => toggleSidebarMenu();
+            document.body.appendChild(overlay);
+        } else if (overlay && sidebar.classList.contains('sidebar-hidden')) {
+            overlay.remove();
+        }
+    } else {
+        // للشاشات الكبيرة - تصغير/توسيع القائمة
+        sidebar.classList.toggle('hidden');
+        mainContent.classList.toggle('sidebar-hidden');
+    }
     
     // حفظ الحالة
-    const isHidden = sidebar.classList.contains('hidden');
+    const isHidden = sidebar.classList.contains('hidden') || sidebar.classList.contains('sidebar-hidden');
     localStorage.setItem('sidebarHidden', isHidden);
 }
 
 function toggleSidebar() {
     // للتوافق مع الأجهزة المحمولة
-    document.getElementById('sidebar').classList.toggle('show');
+    toggleSidebarMenu();
+}
+
+// إغلاق القائمة عند النقر على عنصر في الشاشات الصغيرة
+function closeSidebarOnMobile() {
+    if (window.innerWidth <= 768) {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        if (sidebar) sidebar.classList.add('sidebar-hidden');
+        if (overlay) overlay.remove();
+    }
 }
 
 // ==================== لوحة التحكم ====================
@@ -1181,9 +1232,9 @@ function showAddCaseModal() {
                 </select>
             </div>
             <div class="form-group">
-                <label>الموكل *</label>
+                <label>العميل *</label>
                 <select name="client" required>
-                    <option value="">اختر الموكل</option>
+                    <option value="">اختر العميل</option>
                     ${clientsOptions}
                 </select>
             </div>
@@ -1296,9 +1347,9 @@ function editCase(id) {
                 </select>
             </div>
             <div class="form-group">
-                <label>الموكل *</label>
+                <label>العميل *</label>
                 <select name="client" required>
-                    <option value="">اختر الموكل</option>
+                    <option value="">اختر العميل</option>
                     ${clientsOptions}
                 </select>
             </div>
@@ -1416,7 +1467,7 @@ function showCaseDetails(id) {
                 <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:15px">
                     <div><strong>العنوان:</strong> ${caseData.title}</div>
                     <div><strong>المحامي:</strong> ⚖️ ${caseData.lawyer}</div>
-                    <div><strong>الموكل:</strong> 👤 ${caseData.client}</div>
+                    <div><strong>العميل:</strong> 👤 ${caseData.client}</div>
                     <div><strong>المحكمة:</strong> 🏛️ ${caseData.court || '-'}</div>
                     <div><strong>تاريخ البدء:</strong> 📅 ${new Date(caseData.startDate).toLocaleDateString('ar-IQ')}</div>
                     <div><strong>الحالة:</strong> <span class="status-${caseData.status}">${getStatusText(caseData.status)}</span></div>
@@ -1484,7 +1535,7 @@ function showCaseDetails(id) {
     showModal();
 }
 
-// ==================== الموكلين ====================
+// ==================== العملاء ====================
 function renderClients() {
     const search = document.getElementById('clientSearch')?.value.toLowerCase() || '';
     const filtered = database.clients.filter(c => 
@@ -1492,7 +1543,7 @@ function renderClients() {
         c.phone.includes(search)
     );
     
-    // تحديث رصيد كل موكل
+    // تحديث رصيد كل عميل
     filtered.forEach(client => {
         const balance = calculateClientBalance(client.name);
         const clientInDb = database.clients.find(c => c.id === client.id);
@@ -1529,7 +1580,7 @@ function renderClients() {
             </div>
             `;
         }).join('')
-        : '<p style="text-align:center;color:var(--text-light);padding:40px">لا يوجد موكلين</p>';
+        : '<p style="text-align:center;color:var(--text-light);padding:40px">لا يوجد عملاء</p>';
 }
 
 function calculateClientBalance(clientName) {
@@ -1539,16 +1590,16 @@ function calculateClientBalance(clientName) {
     clientTransactions.forEach(t => {
         const amount = parseFloat(t.amount);
         if (t.type === 'payment_from_client') {
-            // دفع من الموكل لنا = يقلل من دينه علينا
+            // دفع من العميل لنا = يقلل من دينه علينا
             balance -= amount;
         } else if (t.type === 'payment_to_client') {
-            // دفع منا للموكل = يزيد من دينه علينا
+            // دفع منا للعميل = يزيد من دينه علينا
             balance += amount;
         } else if (t.type === 'service_fee') {
-            // رسوم خدمة = يزيد ما يدين به الموكل للمكتب
+            // رسوم خدمة = يزيد ما يدين به العميل للمكتب
             balance += amount;
         } else if (t.type === 'expense') {
-            // مصروف مرتبط بموكل = يزيد ما يدين به الموكل للمكتب
+            // مصروف مرتبط بعميل = يزيد ما يدين به العميل للمكتب
             balance += amount;
         }
     });
@@ -1562,7 +1613,7 @@ function filterClients() {
 
 function showAddClientModal() {
     if (!checkPermission('clients', 'add')) return;
-    document.getElementById('modalTitle').textContent = '➕ إضافة موكل جديد';
+    document.getElementById('modalTitle').textContent = '➕ إضافة عميل جديد';
     document.getElementById('modalBody').innerHTML = `
         <form id="clientForm" onsubmit="saveClient(event)">
             <div class="form-group">
@@ -1610,7 +1661,7 @@ async function saveClient(e) {
             renderClients();
             updateDashboard();
             closeModal();
-            showToast('✅ تم إضافة الموكل بنجاح', 'success');
+            showToast('✅ تم إضافة العميل بنجاح', 'success');
             return;
         }
     }
@@ -1622,7 +1673,7 @@ async function saveClient(e) {
     renderClients();
     updateDashboard();
     closeModal();
-    showToast('✅ تم إضافة الموكل بنجاح (محلي)', 'success');
+    showToast('✅ تم إضافة العميل بنجاح (محلي)', 'success');
 }
 
 function editClient(id) {
@@ -1630,7 +1681,7 @@ function editClient(id) {
     const client = database.clients.find(c => c.id === id);
     if (!client) return;
     
-    document.getElementById('modalTitle').textContent = '✏️ تعديل بيانات الموكل';
+    document.getElementById('modalTitle').textContent = '✏️ تعديل بيانات العميل';
     document.getElementById('modalBody').innerHTML = `
         <form id="clientForm" onsubmit="updateClient(event, ${id})">
             <div class="form-group">
@@ -1670,14 +1721,14 @@ function updateClient(e, id) {
         saveData();
         renderClients();
         closeModal();
-        showToast('✅ تم تحديث بيانات الموكل', 'success');
+        showToast('✅ تم تحديث بيانات العميل', 'success');
     }
 }
 
 async function deleteClient(id) {
     if (!checkPermission('clients', 'delete')) return;
-    if (confirm('هل أنت متأكد من حذف هذا الموكل؟')) {
-        logActivity('delete_client', `حذف موكل: ${database.clients.find(c => c.id === id)?.name}`);
+    if (confirm('هل أنت متأكد من حذف هذا العميل؟')) {
+        logActivity('delete_client', `حذف عميل: ${database.clients.find(c => c.id === id)?.name}`);
         
         // Try API first
         if (useBackend && authToken) {
@@ -1687,7 +1738,7 @@ async function deleteClient(id) {
                 saveData();
                 renderClients();
                 updateDashboard();
-                showToast('🗑️ تم حذف الموكل', 'success');
+                showToast('🗑️ تم حذف العميل', 'success');
                 return;
             }
         }
@@ -1697,7 +1748,7 @@ async function deleteClient(id) {
         saveData();
         renderClients();
         updateDashboard();
-        showToast('🗑️ تم حذف الموكل (محلي)', 'success');
+        showToast('🗑️ تم حذف العميل (محلي)', 'success');
     }
 }
 
@@ -1737,8 +1788,8 @@ function viewClientAccount(clientId) {
             }
             
             const typeLabels = {
-                'payment_from_client': '💵 دفعة من الموكل',
-                'payment_to_client': '💰 دفعة للموكل',
+                'payment_from_client': '💵 دفعة من العميل',
+                'payment_to_client': '💰 دفعة للعميل',
                 'service_fee': '📋 رسوم خدمة',
                 'expense': '💸 مصروف مرتبط'
             };
@@ -1756,7 +1807,7 @@ function viewClientAccount(clientId) {
         }).join('')
         : '<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--text-light)">لا توجد معاملات</td></tr>';
     
-    document.getElementById('modalTitle').textContent = `💳 حساب الموكل: ${client.name}`;
+    document.getElementById('modalTitle').textContent = `💳 حساب العميل: ${client.name}`;
     document.getElementById('modalBody').innerHTML = `
         <div style="margin-bottom:30px">
             <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin-bottom:20px">
@@ -1798,10 +1849,10 @@ function viewClientAccount(clientId) {
         
         <div style="margin-top:20px;display:flex;gap:10px">
             <button class="btn-primary" onclick="addQuickPayment(${clientId}, 'from')" style="flex:1">
-                💵 تسجيل دفعة من الموكل
+                💵 تسجيل دفعة من العميل
             </button>
             <button class="btn-primary" onclick="addQuickPayment(${clientId}, 'to')" style="flex:1">
-                💰 تسجيل دفعة للموكل
+                💰 تسجيل دفعة للعميل
             </button>
         </div>
 
@@ -1942,9 +1993,9 @@ function showAddTransactionModal() {
                 </select>
             </div>
             <div class="form-group" id="clientGroup" style="display:none">
-                <label>👤 الموكل *</label>
+                <label>👤 العميل *</label>
                 <select name="client" id="clientSelect">
-                    <option value="">اختر الموكل</option>
+                    <option value="">اختر العميل</option>
                     ${clientsOptions}
                 </select>
             </div>
@@ -3140,7 +3191,7 @@ function generateClientInvoice(client, transactions, balance, company) {
                 
                 <div class="client-info">
                     <div class="info-row">
-                        <div class="info-label">اسم الموكل:</div>
+                        <div class="info-label">اسم العميل:</div>
                         <div class="info-value">${client.name}</div>
                     </div>
                     <div class="info-row">
@@ -3431,7 +3482,7 @@ function generateCaseInvoice(caseData, company) {
                         <div class="detail-value">${caseData.lawyer}</div>
                     </div>
                     <div class="detail-row">
-                        <div class="detail-label"><span>👤</span> الموكل:</div>
+                        <div class="detail-label"><span>👤</span> العميل:</div>
                         <div class="detail-value">${caseData.client}</div>
                     </div>
                     <div class="detail-row">
@@ -3490,7 +3541,7 @@ function generateCaseInvoice(caseData, company) {
                             <tbody>
                                 ${transactions.map(t => {
                                     const typeLabels = {
-                                        'payment_from_client': '💵 دفعة من موكل',
+                                        'payment_from_client': '💵 دفعة من عميل',
                                         'payment_to_client': '💸 دفعة لموكل',
                                         'service_fee': '💰 رسوم خدمة',
                                         'expense': '📤 مصروف',
@@ -4492,7 +4543,7 @@ function calculateLawyerBalance(lawyerId) {
             // معاملات عامة مرتبطة بالمحامي
             case 'service_fee': // رسوم خدمة قام بها المحامي
             case 'income': // إيراد عام
-            case 'payment_from_client': // دفعة من موكل
+            case 'payment_from_client': // دفعة من عميل
                 totalIncome += amount;
                 break;
             case 'expense': // مصروف
@@ -4991,8 +5042,8 @@ function getTransactionTypeText(type) {
     const types = {
         'income': 'إيراد',
         'expense': 'مصروف',
-        'payment_from_client': 'دفعة من موكل',
-        'payment_to_client': 'دفعة لموكل',
+        'payment_from_client': 'دفعة من عميل',
+        'payment_to_client': 'دفعة لعميل',
         'service_fee': 'أتعاب خدمة',
         'salary': 'راتب',
         'commission': 'عمولة',
@@ -5489,6 +5540,7 @@ function initializeApp() {
     
     // بدء من الصفر - عرض شاشة تسجيل الدخول
     console.log('🔐 عرض شاشة تسجيل الدخول');
+    document.body.classList.add('login-active');
     loadData();
     initializeLoginForm();
 }

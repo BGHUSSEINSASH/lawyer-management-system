@@ -1,0 +1,50 @@
+# نظام إدارة المحامين v7.0 - robots.txt
+# آخر تحديث: 14 يناير 2026
+
+User-agent: *
+Allow: /
+Allow: /index.html
+Allow: /app.js
+Allow: /style.css
+Allow: /manifest.json
+Allow: /404.html
+Allow: /sitemap.xml
+
+# منع الوصول إلى الملفات الحساسة
+Disallow: /.env
+Disallow: /.env.example
+Disallow: /.firebaserc
+Disallow: /.git/
+Disallow: /node_modules/
+Disallow: /backend/
+Disallow: /private/
+Disallow: /admin/private/
+
+# Crawl delay (تأخير الزحف)
+Crawl-delay: 1
+
+# خريطة الموقع
+Sitemap: https://test-b5a31.web.app/sitemap.xml
+
+# Google-specific
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+# Bing-specific
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+# منع بعض الروبوتات غير المرغوبة
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /

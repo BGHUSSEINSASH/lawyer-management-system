@@ -1,119 +1,141 @@
-// Service Worker for نظام إدارة المحامين
-const CACHE_NAME = 'lawyer-system-v1';
-const urlsToCache = [
+// Service Worker المتقدم v7.0
+const CACHE_VERSION = 'v7.0.0';
+const CACHE_NAME = `lawyer-system-${CACHE_VERSION}`;
+
+// الملفات الأساسية للتخزين المؤقت
+const CORE_ASSETS = [
   '/',
   '/index.html',
-  '/style.css',
   '/app.js',
-  '/manifest.json',
-  '/icon.svg'
+  '/style.css',
+  '/manifest.json'
 ];
 
-// Install event - cache assets
-self.addEventListener('install', event => {
-  console.log('🔧 Service Worker installing...');
+// استراتيجية التخزين المؤقت: Cache First مع Fallback
+const CACHE_STRATEGIES = {
+  cacheFirst: ['css', 'js', 'png', 'jpg', 'jpeg', 'svg', 'gif', 'webp', 'woff', 'woff2', 'ttf', 'eot'],
+  networkFirst: ['html', 'json']
+};
+
+// التثبيت - تخزين الملفات الأساسية
+self.addEventListener('install', (event) => {
+  console.log('[SW] Installing Service Worker v7.0...');
+  
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      console.log('📦 Caching assets');
-      return cache.addAll(urlsToCache).catch(err => {
-        console.warn('⚠️ Some assets failed to cache:', err);
-        // Continue without fully blocking on cache errors
-        return Promise.resolve();
-      });
-    }).catch(err => {
-      console.warn('⚠️ Cache open failed:', err);
-    })
+    caches.open(CACHE_NAME)
+      .then(cache => {
+        console.log('[SW] Caching core assets');
+        return cache.addAll(CORE_ASSETS);
+      })
+      .then(() => self.skipWaiting())
+      .catch(err => console.error('[SW] Cache failed:', err))
   );
-  self.skipWaiting();
 });
 
-// Activate event - clean up old caches
-self.addEventListener('activate', event => {
-  console.log('✅ Service Worker activated');
+// التفعيل - حذف الكاش القديم
+self.addEventListener('activate', (event) => {
+  console.log('[SW] Activating Service Worker v7.0');
+  
   event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('🗑️ Deleting old cache:', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
+    caches.keys()
+      .then(cacheNames => {
+        return Promise.all(
+          cacheNames
+            .filter(name => name !== CACHE_NAME)
+            .map(name => {
+              console.log('[SW] Deleting old cache:', name);
+              return caches.delete(name);
+            })
+        );
+      })
+      .then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
-// Fetch event - serve from cache, fall back to network
-self.addEventListener('fetch', event => {
-  // Skip cross-origin requests and API calls by default
-  if (!event.request.url.startsWith(self.location.origin)) {
+// جلب الملفات - استراتيجية ذكية
+self.addEventListener('fetch', (event) => {
+  const { request } = event;
+  const url = new URL(request.url);
+
+  // تجاهل الطلبات الخارجية
+  if (url.origin !== location.origin) {
     return;
   }
 
-  // For HTML, CSS, JS: network first, fall back to cache
-  if (event.request.destination === 'document' || 
-      event.request.destination === 'script' || 
-      event.request.destination === 'style') {
+  const extension = url.pathname.split('.').pop();
+
+  // استراتيجية Cache First للملفات الثابتة
+  if (CACHE_STRATEGIES.cacheFirst.includes(extension)) {
     event.respondWith(
-      fetch(event.request)
-        .then(response => {
-          // Cache successful responses
-          if (response && response.status === 200) {
-            const responseClone = response.clone();
-            caches.open(CACHE_NAME).then(cache => {
-              cache.put(event.request, responseClone);
-            });
+      caches.match(request)
+        .then(cached => {
+          if (cached) {
+            console.log('[SW] Serving from cache:', url.pathname);
+            return cached;
           }
-          return response;
+          
+          return fetch(request)
+            .then(response => {
+              // تخزين النسخة الجديدة
+              return caches.open(CACHE_NAME)
+                .then(cache => {
+                  cache.put(request, response.clone());
+                  return response;
+                });
+            });
         })
         .catch(() => {
-          console.log('📦 Serving from cache:', event.request.url);
-          return caches.match(event.request);
+          // إذا فشل كل شيء، عرض صفحة offline
+          if (request.destination === 'document') {
+            return caches.match('/index.html');
+          }
         })
     );
-  } 
-  // For other assets: cache first, fall back to network
-  else {
+  }
+  // استراتيجية Network First للـ HTML و JSON
+  else if (CACHE_STRATEGIES.networkFirst.includes(extension) || request.destination === 'document') {
     event.respondWith(
-      caches.match(event.request)
+      fetch(request)
         .then(response => {
-          if (response) {
-            console.log('📦 Serving from cache:', event.request.url);
-            return response;
-          }
-          return fetch(event.request).then(response => {
-            if (!response || response.status !== 200 || response.type === 'error') {
+          // تخزين النسخة الجديدة
+          return caches.open(CACHE_NAME)
+            .then(cache => {
+              cache.put(request, response.clone());
               return response;
-            }
-            const responseClone = response.clone();
-            caches.open(CACHE_NAME).then(cache => {
-              cache.put(event.request, responseClone);
             });
-            return response;
-          });
         })
         .catch(() => {
-          console.warn('❌ Failed to fetch:', event.request.url);
-          // Return a basic offline response
-          return new Response('Offline - resource not available', {
-            status: 503,
-            statusText: 'Service Unavailable',
-            headers: new Headers({ 'Content-Type': 'text/plain' })
-          });
+          // إذا لا يوجد إنترنت، استخدم الكاش
+          return caches.match(request)
+            .then(cached => {
+              if (cached) {
+                console.log('[SW] Serving from cache (offline):', url.pathname);
+                return cached;
+              }
+              // آخر حل: الصفحة الرئيسية
+              return caches.match('/index.html');
+            });
         })
     );
   }
 });
 
-// Message handler - respond to clients safely
-self.addEventListener('message', event => {
-  console.log('💬 Message received in SW:', event.data);
-  // Always respond to messages to prevent "message channel closed" errors
-  if (event.ports && event.ports.length > 0) {
-    event.ports[0].postMessage({ success: true, message: 'Service Worker received message' });
+// معالجة رسائل من التطبيق
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+  
+  if (event.data && event.data.type === 'CLEAR_CACHE') {
+    event.waitUntil(
+      caches.keys()
+        .then(names => Promise.all(names.map(name => caches.delete(name))))
+        .then(() => console.log('[SW] All caches cleared'))
+    );
   }
 });
 
-console.log('✅ Service Worker loaded successfully');
+// إرسال إشعار عند التحديث
+self.addEventListener('controllerchange', () => {
+  console.log('[SW] Controller changed - new version active');
+});

@@ -1,22 +1,42 @@
 {
-  "name": "نظام إدارة المحامين",
+  "name": "نظام إدارة المحامين v7.0",
   "short_name": "المحامين",
+  "description": "نظام إدارة شامل للمحامين والقضايا والعملاء والمعاملات المالية",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#667eea",
+  "orientation": "any",
+  "categories": ["business", "productivity"],
+  "lang": "ar",
+  "dir": "rtl",
+  "scope": "/",
   "icons": [
     {
-      "src": "https://via.placeholder.com/192.png?text=%E2%9A%96%EF%B8%8F",
+      "src": "/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
-      "src": "https://via.placeholder.com/512.png?text=%E2%9A%96%EF%B8%8F",
+      "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot1.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/screenshot2.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
     }
   ]
 }

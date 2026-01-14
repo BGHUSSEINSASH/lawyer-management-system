@@ -2,17 +2,21 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="theme-color" content="#667eea">
+    <meta name="description" content="نظام إدارة شامل للمحامين - إدارة القضايا، العملاء، المعاملات المالية والمزيد">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="المحامين">
-    <title>⚖️ نظام إدارة المحامين v5.0</title>
+    <title>⚖️ نظام إدارة المحامين v7.0</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/svg+xml" href="/icon.svg">
-    <link rel="apple-touch-icon" href="/icon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed:', err));
+        }
+    </script>
 </head>
 <body>
     <!-- شاشة تسجيل الدخول -->
@@ -48,7 +52,7 @@
         <header class="header">
             <div class="header-right">
                 <button class="menu-toggle" id="menuToggleBtn" onclick="toggleSidebarMenu()" title="إخفاء/إظهار القائمة">
-                    <span class="hamburger-icon">✕</span>
+                    <span class="hamburger-icon">☰</span>
                 </button>
                 <h2 id="pageTitle">لوحة التحكم</h2>
             </div>
@@ -81,7 +85,7 @@
                     </button>
                     <button class="nav-item" onclick="showSection('clients')">
                         <span class="icon">👥</span>
-                        <span>الزبائن</span>
+                        <span>العملاء</span>
                     </button>
                     <button class="nav-item" onclick="showSection('transactions')">
                         <span class="icon">💰</span>
@@ -149,11 +153,11 @@
                             </div>
                         </div>
 
-                        <!-- الزبائن -->
+                        <!-- العملاء -->
                         <div style="background:linear-gradient(135deg,#4facfe,#00f2fe);color:white;padding:25px;border-radius:16px;box-shadow:0 8px 25px rgba(79,172,254,0.3);position:relative;overflow:hidden">
                             <div style="position:absolute;top:-20px;right:-20px;width:100px;height:100px;background:rgba(255,255,255,0.1);border-radius:50%"></div>
                             <div style="position:relative;z-index:1">
-                                <div style="font-size:0.9em;opacity:0.95;margin-bottom:8px;font-weight:600">👥 إجمالي الزبائن</div>
+                                <div style="font-size:0.9em;opacity:0.95;margin-bottom:8px;font-weight:600">👥 إجمالي العملاء</div>
                                 <div style="font-size:3.5em;font-weight:900;line-height:1" id="totalClients">0</div>
                                 <div style="margin-top:10px;font-size:0.85em;opacity:0.9">عميل مسجل</div>
                             </div>
@@ -200,33 +204,6 @@
                         </div>
                         <button class="btn-primary" style="width:100%;margin-top:20px;padding:14px;font-size:1.05em;background:linear-gradient(135deg,#667eea,#764ba2);border:none;border-radius:10px;color:white;font-weight:700;cursor:pointer" onclick="saveCurrencySettings()">💾 حفظ الإعدادات</button>
                     </div>
-
-                    <!-- Recent Activities -->
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:25px">
-                    </div>
-
-                        <!-- آخر القضايا -->
-                        <div style="background:white;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.08);border:2px solid #f0f0f0">
-                            <div style="background:linear-gradient(135deg,#f093fb,#f5576c);color:white;padding:20px">
-                                <h3 style="margin:0;font-size:1.3em;font-weight:800;display:flex;align-items:center;gap:10px">
-                                    <span style="font-size:1.5em">📋</span>
-                                    <span>آخر القضايا</span>
-                                </h3>
-                            </div>
-                            <div style="padding:15px;max-height:400px;overflow-y:auto" id="recentCases"></div>
-                        </div>
-
-                        <!-- آخر المعاملات -->
-                        <div style="background:white;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.08);border:2px solid #f0f0f0">
-                            <div style="background:linear-gradient(135deg,#43e97b,#38f9d7);color:white;padding:20px">
-                                <h3 style="margin:0;font-size:1.3em;font-weight:800;display:flex;align-items:center;gap:10px">
-                                    <span style="font-size:1.5em">💰</span>
-                                    <span>آخر المعاملات</span>
-                                </h3>
-                            </div>
-                            <div style="padding:15px;max-height:400px;overflow-y:auto" id="recentTransactions"></div>
-                        </div>
-                    </div>
                 </section>
 
                 <!-- المحامين -->
@@ -241,29 +218,6 @@
                             <button id="addLawyerBtn" class="btn-primary" onclick="showAddLawyerModal()" style="background:white;color:#667eea;border:none;box-shadow:0 4px 15px rgba(0,0,0,0.2);font-weight:700;padding:12px 30px;border-radius:10px;cursor:pointer">
                                 ➕ إضافة محامي جديد
                             </button>
-                        </div>
-                    </div>
-                    <!-- Metrics -->
-                    <div class="metrics-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin-bottom:18px">
-                        <div class="card" style="padding:16px;border-radius:12px;background:#fff;box-shadow:var(--shadow)">
-                            <div style="color:#64748b;font-weight:700">👨‍⚖️ عدد المحامين</div>
-                            <div id="metricLawyersCount" style="font-weight:900;font-size:1.8em">0</div>
-                        </div>
-                        <div class="card" style="padding:16px;border-radius:12px;background:#fff;box-shadow:var(--shadow)">
-                            <div style="color:#64748b;font-weight:700">💰 إجمالي الرواتب</div>
-                            <div id="metricLawyersSalaries" style="font-weight:900;font-size:1.2em">0</div>
-                        </div>
-                        <div class="card" style="padding:16px;border-radius:12px;background:#fff;box-shadow:var(--shadow)">
-                            <div style="color:#64748b;font-weight:700">📈 إجمالي الدائن</div>
-                            <div id="metricLawyersCredit" style="font-weight:900;font-size:1.2em">0</div>
-                        </div>
-                        <div class="card" style="padding:16px;border-radius:12px;background:#fff;box-shadow:var(--shadow)">
-                            <div style="color:#64748b;font-weight:700">📉 إجمالي المدين</div>
-                            <div id="metricLawyersDebt" style="font-weight:900;font-size:1.2em">0</div>
-                        </div>
-                        <div class="card" style="padding:16px;border-radius:12px;background:#fff;box-shadow:var(--shadow)">
-                            <div style="color:#64748b;font-weight:700">📊 صافي الرصيد</div>
-                            <div id="metricLawyersNet" style="font-weight:900;font-size:1.2em">0</div>
                         </div>
                     </div>
                     
@@ -306,25 +260,6 @@
                             </button>
                         </div>
                     </div>
-                    <!-- Metrics -->
-                    <div class="metrics-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin-bottom:18px">
-                        <div class="card" style="padding:16px;border-radius:12px;background:#fff;box-shadow:var(--shadow)">
-                            <div style="color:#64748b;font-weight:700">✅ نشطة</div>
-                            <div id="metricCasesActive" style="font-weight:900;font-size:1.8em">0</div>
-                        </div>
-                        <div class="card" style="padding:16px;border-radius:12px;background:#fff;box-shadow:var(--shadow)">
-                            <div style="color:#64748b;font-weight:700">⏳ معلقة</div>
-                            <div id="metricCasesPending" style="font-weight:900;font-size:1.8em">0</div>
-                        </div>
-                        <div class="card" style="padding:16px;border-radius:12px;background:#fff;box-shadow:var(--shadow)">
-                            <div style="color:#64748b;font-weight:700">🔒 مغلقة</div>
-                            <div id="metricCasesClosed" style="font-weight:900;font-size:1.8em">0</div>
-                        </div>
-                        <div class="card" style="padding:16px;border-radius:12px;background:#fff;box-shadow:var(--shadow)">
-                            <div style="color:#64748b;font-weight:700">💵 إجمالي الأتعاب</div>
-                            <div id="metricCasesFees" style="font-weight:900;font-size:1.2em">0</div>
-                        </div>
-                    </div>
                     
                     <!-- Search & Filter Bar -->
                     <div style="background:white;padding:20px;border-radius:16px;margin-bottom:25px;box-shadow:0 4px 20px rgba(0,0,0,0.08);border:2px solid #f0f0f0">
@@ -358,55 +293,24 @@
                     </div>
                 </section>
 
-                <!-- الزبائن -->
+                <!-- العملاء -->
                 <section id="clients" class="section">
                     <!-- Header Section -->
                     <div style="background:linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);color:white;padding:25px;border-radius:16px;margin-bottom:25px;box-shadow:0 10px 30px rgba(79,172,254,0.3)">
                         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px">
                             <div>
-                                <h2 style="margin:0;font-size:1.8em;font-weight:800;color:white;text-shadow:2px 2px 4px rgba(0,0,0,0.2)">👥 إدارة الزبائن</h2>
+                                <h2 style="margin:0;font-size:1.8em;font-weight:800;color:white;text-shadow:2px 2px 4px rgba(0,0,0,0.2)">👥 إدارة العملاء</h2>
                                 <p style="margin:5px 0 0 0;opacity:0.9;font-size:0.95em">قاعدة بيانات شاملة لجميع العملاء</p>
                             </div>
                             <button id="addClientBtn" class="btn-primary" onclick="showAddClientModal()" style="background:white;color:#00f2fe;border:none;box-shadow:0 4px 15px rgba(0,0,0,0.2);font-weight:700;padding:12px 30px;border-radius:10px;cursor:pointer">
-                                ➕ إضافة زبون جديد
+                                ➥ إضافة عميل جديد
                             </button>
                         </div>
                     </div>
                     
                     <!-- Search Bar -->
-                    <!-- Metrics -->
-                    <div class="metrics-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin-bottom:18px">
-                        <div class="card" style="padding:16px;border-radius:12px;background:#fff;box-shadow:var(--shadow)">
-                            <div style="color:#64748b;font-weight:700">👥 عدد الزبائن</div>
-                            <div id="metricClientsCount" style="font-weight:900;font-size:1.8em">0</div>
-                        </div>
-                        <div class="card" style="padding:16px;border-radius:12px;background:#fff;box-shadow:var(--shadow)">
-                            <div style="color:#64748b;font-weight:700">💸 المدينون لنا</div>
-                            <div id="metricClientsDebtors" style="font-weight:900;font-size:1.2em">0</div>
-                        </div>
-                        <div class="card" style="padding:16px;border-radius:12px;background:#fff;box-shadow:var(--shadow)">
-                            <div style="color:#64748b;font-weight:700">💰 الدائنون علينا</div>
-                            <div id="metricClientsCreditors" style="font-weight:900;font-size:1.2em">0</div>
-                        </div>
-                        <div class="card" style="padding:16px;border-radius:12px;background:#fff;box-shadow:var(--shadow)">
-                            <div style="color:#64748b;font-weight:700">📊 الصافي</div>
-                            <div id="metricClientsNet" style="font-weight:900;font-size:1.2em">0</div>
-                        </div>
-                    </div>
-
                     <div style="background:white;padding:20px;border-radius:16px;margin-bottom:25px;box-shadow:0 4px 20px rgba(0,0,0,0.08);border:2px solid #f0f0f0">
-
-                        <div class="card">
-                            <h3>المظهر</h3>
-                            <div class="form-group">
-                                <label for="compactModeToggle">الوضع المضغوط (تقليل المسافات لعرض المزيد)</label>
-                                <input type="checkbox" id="compactModeToggle" />
-                            </div>
-                            <p style="color:#64748b; font-size: 0.9em; margin-top: 8px;">
-                                فعّل هذا الخيار لتقليل الفراغات والمسافات في الجداول والبطاقات لعرض محتوى أكثر دون تمرير.
-                            </p>
-                        </div>
-                        <input type="text" id="clientSearch" placeholder="🔍 ابحث عن زبون بالاسم، رقم الهاتف، العنوان..." onkeyup="filterClients()" style="width:100%;padding:14px 20px;border-radius:12px;border:2px solid #e0e0e0;font-size:1.05em;transition:all 0.3s" onfocus="this.style.borderColor='#4facfe'" onblur="this.style.borderColor='#e0e0e0'">
+                        <input type="text" id="clientSearch" placeholder="🔍 ابحث عن عميل بالاسم، رقم الهاتف، العنوان..." onkeyup="filterClients()" style="width:100%;padding:14px 20px;border-radius:12px;border:2px solid #e0e0e0;font-size:1.05em;transition:all 0.3s" onfocus="this.style.borderColor='#4facfe'" onblur="this.style.borderColor='#e0e0e0'">
                     </div>
 
                     <div class="clients-grid" id="clientsGrid"></div>
@@ -426,30 +330,11 @@
                             </button>
                         </div>
                     </div>
-                    <!-- Metrics -->
-                    <div class="metrics-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin-bottom:18px">
-                        <div class="card" style="padding:16px;border-radius:12px;background:#fff;box-shadow:var(--shadow)">
-                            <div style="color:#64748b;font-weight:700">📥 إجمالي الإيرادات</div>
-                            <div id="metricTxIncome" style="font-weight:900;font-size:1.2em">0</div>
-                        </div>
-                        <div class="card" style="padding:16px;border-radius:12px;background:#fff;box-shadow:var(--shadow)">
-                            <div style="color:#64748b;font-weight:700">📤 إجمالي المصروفات</div>
-                            <div id="metricTxExpense" style="font-weight:900;font-size:1.2em">0</div>
-                        </div>
-                        <div class="card" style="padding:16px;border-radius:12px;background:#fff;box-shadow:var(--shadow)">
-                            <div style="color:#64748b;font-weight:700">💹 الصافي</div>
-                            <div id="metricTxNet" style="font-weight:900;font-size:1.2em">0</div>
-                        </div>
-                        <div class="card" style="padding:16px;border-radius:12px;background:#fff;box-shadow:var(--shadow)">
-                            <div style="color:#64748b;font-weight:700">🧾 عدد المعاملات</div>
-                            <div id="metricTxCount" style="font-weight:900;font-size:1.8em">0</div>
-                        </div>
-                    </div>
                     
                     <!-- Search & Filter Bar -->
                     <div style="background:white;padding:20px;border-radius:16px;margin-bottom:25px;box-shadow:0 4px 20px rgba(0,0,0,0.08);border:2px solid #f0f0f0">
                         <div style="display:grid;grid-template-columns:1fr auto;gap:15px">
-                            <input type="text" id="transactionSearch" placeholder="🔍 ابحث في المعاملات أو الزبون..." onkeyup="filterTransactions()" style="padding:12px 20px;border-radius:10px;border:2px solid #e0e0e0;font-size:1em;transition:all 0.3s" onfocus="this.style.borderColor='#43e97b'" onblur="this.style.borderColor='#e0e0e0'">
+                            <input type="text" id="transactionSearch" placeholder="🔍 ابحث في المعاملات أو العميل..." onkeyup="filterTransactions()" style="padding:12px 20px;border-radius:10px;border:2px solid #e0e0e0;font-size:1em;transition:all 0.3s" onfocus="this.style.borderColor='#43e97b'" onblur="this.style.borderColor='#e0e0e0'">
                             <select id="transactionTypeFilter" onchange="filterTransactions()" style="padding:12px 20px;border-radius:10px;border:2px solid #e0e0e0;background:white;font-weight:600;color:#2c3e50;cursor:pointer;min-width:200px">
                                 <option value="">📊 جميع الأنواع</option>
                                 <option value="salary">💼 راتب / مستحقات</option>
@@ -490,29 +375,14 @@
                             </div>
                             <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
                                 <button class="btn-primary" onclick="showAddTransactionModal()" style="background:white;color:#667eea;border:none;box-shadow:0 4px 15px rgba(0,0,0,0.2);font-weight:700">➕ معاملة جديدة</button>
-                                <button class="btn-secondary" onclick="exportDebtorsExcel()" style="background:rgba(255,255,255,0.2);color:white;border:2px solid white;backdrop-filter:blur(10px);font-weight:600">📊 Excel</button>
                             </div>
                         </div>
                         
-                        <!-- Exchange Rate + Display Control -->
-                        <div style="margin-top:20px;background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);padding:15px;border-radius:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-                            <div style="display:flex;align-items:center;gap:10px">
-                                <span style="font-weight:700;font-size:1.05em">💱 سعر الصرف:</span>
-                                <input type="number" id="debtorExchangeRate" value="1450" style="width:140px;padding:10px 15px;border-radius:10px;border:2px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.95);font-weight:700;font-size:1.05em" onchange="saveExchangeRate()">
-                                <span style="font-weight:600;opacity:0.95">دينار/دولار</span>
-                            </div>
-                            <div style="display:flex;align-items:center;gap:10px">
-                                <span style="font-weight:700;font-size:1.05em">💲 العرض:</span>
-                                <select id="debtorDisplayCurrency" onchange="setDebtorDisplayCurrency(this.value)" style="padding:8px 12px;border-radius:10px;border:2px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.95);font-weight:700">
-                                    <option value="IQD">دينار (IQD)</option>
-                                    <option value="USD">دولار (USD)</option>
-                                </select>
-                            </div>
-                            <button id="debtorSyncToggle" onclick="toggleDebtorRateSync()" 
-                                    style="padding:8px 12px;border-radius:10px;border:2px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.95);font-weight:700;cursor:pointer">
-                                🔄 مزامنة تلقائية: مفعلة
-                            </button>
-                            <div id="debtorsLastUpdated" style="margin-right:auto;color:#fff;font-weight:600;opacity:0.95">🕒 آخر تحديث: —</div>
+                        <!-- Exchange Rate Control -->
+                        <div style="margin-top:20px;background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);padding:15px;border-radius:12px;display:flex;align-items:center;gap:12px">
+                            <span style="font-weight:700;font-size:1.05em">💱 سعر الصرف:</span>
+                            <input type="number" id="exchangeRate" value="1450" style="width:140px;padding:10px 15px;border-radius:10px;border:2px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.95);font-weight:700;font-size:1.05em" onchange="saveExchangeRate()">
+                            <span style="font-weight:600;opacity:0.95">دينار / دولار</span>
                         </div>
                     </div>
 
@@ -524,7 +394,7 @@
                             <div style="position:relative;z-index:1">
                                 <div style="font-size:0.9em;opacity:0.95;margin-bottom:8px;font-weight:600">👥 عدد المدينين</div>
                                 <div style="font-size:3em;font-weight:900;line-height:1" id="totalDebtorsCount">0</div>
-                                <div style="margin-top:8px;font-size:0.85em;opacity:0.9">زبون يدين للمكتب</div>
+                                <div style="margin-top:8px;font-size:0.85em;opacity:0.9">عميل يدين للمكتب</div>
                             </div>
                         </div>
                         
@@ -544,7 +414,7 @@
                             <div style="position:relative;z-index:1">
                                 <div style="font-size:0.9em;opacity:0.95;margin-bottom:8px;font-weight:600">👥 عدد الدائنين</div>
                                 <div style="font-size:3em;font-weight:900;line-height:1" id="totalCreditorsCount">0</div>
-                                <div style="margin-top:8px;font-size:0.85em;opacity:0.9">زبون ندين له</div>
+                                <div style="margin-top:8px;font-size:0.85em;opacity:0.9">عميل ندين له</div>
                             </div>
                         </div>
                         
@@ -581,7 +451,7 @@
                                 </select>
                             </div>
                             
-                            <input type="text" id="debtorSearch" placeholder="🔍 ابحث عن زبون..." style="padding:12px 20px;border-radius:12px;border:2px solid #e0e0e0;font-size:1em;transition:all 0.3s" oninput="renderDebtorsCreditors()" onfocus="this.style.borderColor='#667eea'" onblur="this.style.borderColor='#e0e0e0'">
+                            <input type="text" id="debtorSearch" placeholder="🔍 ابحث عن عميل..." style="padding:12px 20px;border-radius:12px;border:2px solid #e0e0e0;font-size:1em;transition:all 0.3s" oninput="renderDebtorsCreditors()" onfocus="this.style.borderColor='#667eea'" onblur="this.style.borderColor='#e0e0e0'">
                         </div>
                     </div>
                     
@@ -594,7 +464,7 @@
                                     <span style="font-size:1.5em">💸</span>
                                     <span>المدينون لنا</span>
                                 </h3>
-                                <p style="margin:5px 0 0 0;opacity:0.95;font-size:0.9em">الزبائن الذين يدينون للمكتب</p>
+                                <p style="margin:5px 0 0 0;opacity:0.95;font-size:0.9em">العملاء الذين يدينون للمكتب</p>
                             </div>
                             <div style="padding:15px;max-height:600px;overflow-y:auto" id="debtorsListIQD"></div>
                         </div>
@@ -606,7 +476,7 @@
                                     <span style="font-size:1.5em">💰</span>
                                     <span>الدائنون علينا</span>
                                 </h3>
-                                <p style="margin:5px 0 0 0;opacity:0.95;font-size:0.9em">الزبائن الذين ندين لهم</p>
+                                <p style="margin:5px 0 0 0;opacity:0.95;font-size:0.9em">العملاء الذين ندين لهم</p>
                             </div>
                             <div style="padding:15px;max-height:600px;overflow-y:auto" id="creditorsListIQD"></div>
                         </div>
@@ -659,7 +529,7 @@
                                 <select id="reportType" onchange="generateReport()" style="width:100%;padding:12px;border-radius:10px;border:2px solid #e0e0e0;font-size:1em;font-weight:600;cursor:pointer">
                                     <option value="">اختر نوع التقرير</option>
                                     <option value="financial">💰 التقرير المالي</option>
-                                    <option value="clients">👥 تقرير الزبائن</option>
+                                    <option value="clients">👥 تقرير العملاء</option>
                                     <option value="lawyers">👨‍⚖️ تقرير المحامين</option>
                                     <option value="cases">📁 تقرير القضايا</option>
                                 </select>
@@ -745,30 +615,6 @@
                             </button>
                             <p style="margin-top:12px;color:#718096;font-size:0.85em">إضافة وتعديل وحذف المستخدمين، وإدارة صلاحيات الوصول</p>
                         </div>
-                        <div class="settings-card">
-                            <h3>🏢 إعدادات الشركة</h3>
-                            <button class="btn-primary" onclick="showCompanySettings()" style="width:100%">
-                                📝 إعدادات الطباعة والشعار
-                            </button>
-                            <p style="margin-top:10px;color:var(--text-light);font-size:0.9em">
-                                إعداد بيانات الشركة والشعار للفواتير والتقارير
-                            </p>
-                        </div>
-
-                        <div class="settings-card">
-                            <h3>📥 التصدير</h3>
-                            <button class="btn-primary" onclick="exportAllExcel()" style="width:100%;margin-bottom:10px">📚 Excel الكل</button>
-                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-                                <button class="btn-secondary" onclick="exportToPDF('lawyers')">📝 PDF محامين</button>
-                                <button class="btn-secondary" onclick="exportToExcel('lawyers')">📄 Excel محامين</button>
-                                <button class="btn-secondary" onclick="exportToPDF('cases')">📝 PDF قضايا</button>
-                                <button class="btn-secondary" onclick="exportToExcel('cases')">📄 Excel قضايا</button>
-                                <button class="btn-secondary" onclick="exportToPDF('clients')">📝 PDF زبائن</button>
-                                <button class="btn-secondary" onclick="exportToExcel('clients')">📄 Excel زبائن</button>
-                                <button class="btn-secondary" onclick="exportToPDF('transactions')">📝 PDF معاملات</button>
-                                <button class="btn-secondary" onclick="exportToExcel('transactions')">📄 Excel معاملات</button>
-                            </div>
-                        </div>
                     </div>
                 </section>
 
@@ -807,21 +653,7 @@
         </div>
     </div>
 
-    <!-- XLSX Library - Excel Export Support -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="app.js"></script>
-    
-    <!-- Register Service Worker for PWA -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js')
-                .then(reg => {
-                    console.log('✅ Service Worker registered:', reg);
-                })
-                .catch(err => {
-                    console.warn('⚠️ Service Worker registration failed:', err);
-                });
-        }
-    </script>
 </body>
 </html>

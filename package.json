@@ -1,0 +1,38 @@
+{
+  "name": "lawyer-management-system",
+  "version": "7.0.0",
+  "description": "نظام إدارة المحامين والقضايا v7.0 - نظام شامل ومتقدم",
+  "main": "public/index.html",
+  "scripts": {
+    "start": "firebase serve",
+    "build": "echo 'Building project v7.0...' && npm run copy-files",
+    "copy-files": "echo 'Files synchronized'",
+    "deploy": "firebase deploy --only hosting",
+    "deploy:full": "firebase deploy",
+    "serve": "firebase serve",
+    "test": "echo 'No tests configured yet'",
+    "lint": "echo 'No linting configured yet'",
+    "clean": "echo 'Cleaning cache...'",
+    "update": "npm update",
+    "info": "firebase projects:list"
+  },
+  "keywords": [
+    "lawyer",
+    "management",
+    "قضايا",
+    "محامين",
+    "عملاء",
+    "PWA",
+    "Firebase"
+  ],
+  "author": "نظام إدارة المحامين",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/lawyer-management-system"
+  },
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  }
+}

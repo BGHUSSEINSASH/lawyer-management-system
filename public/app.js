@@ -1,9 +1,5 @@
-// ⚖️ نظام إدارة المحامين v8.0 Financial System - Optimized
-console.log('🚀 تحميل النظام v8.0 - محسّن...');
-
-// ==================== Performance Optimization ====================
-const sectionCache = new Map();
-let currentSectionId = 'dashboard';
+// ⚖️ نظام إدارة المحامين v7.0 Financial System
+console.log('🚀 تحميل النظام v7.0...');
 
 // ==================== API Configuration ====================
 const API_BASE_URL = 'http://localhost:5088/api';
@@ -62,11 +58,11 @@ let database = {
         { id: 4, name: 'زينب عبدالله النجفي', license: 'LIC-2018-023', specialty: 'قانون أحوال شخصية', phone: '07703332222', email: 'zainab@law.com', salary: 2700000, lawyerId: 4 }
     ],
     cases: [
-        { id: 1, caseNumber: 'C-2024-001', title: 'قضية ميراث عقاري', lawyer: 'فاطمة حسن الزهراء', lawyerId: 2, client: 'محمد سعيد الكربلائي', status: 'active', fees: 5000000, date: '2024-01-15', court: 'محكمة الأحوال الشخصية', description: 'نزاع حول تقسيم الميراث العقاري', sessions: [] },
-        { id: 2, caseNumber: 'C-2024-002', title: 'دعوى تعويض عن حادث مروري', lawyer: 'أحمد محمد العلي', lawyerId: 1, client: 'سارة خالد البصري', status: 'active', fees: 3500000, date: '2024-02-10', court: 'محكمة البداءة', description: 'دعوى تعويض عن أضرار مادية وجسدية', sessions: [] },
-        { id: 3, caseNumber: 'C-2024-003', title: 'قضية نزاع تجاري', lawyer: 'علي كريم الجبوري', lawyerId: 3, client: 'شركة النور للتجارة', status: 'pending', fees: 8000000, date: '2024-03-05', court: 'محكمة التجارة', description: 'نزاع تجاري حول عقد توريد', sessions: [] },
-        { id: 4, caseNumber: 'C-2024-004', title: 'دعوى طلاق وحضانة', lawyer: 'زينب عبدالله النجفي', lawyerId: 4, client: 'مريم أحمد الموصلي', status: 'active', fees: 4000000, date: '2024-01-20', court: 'محكمة الأحوال الشخصية', description: 'دعوى طلاق مع طلب حضانة الأطفال', sessions: [] },
-        { id: 5, caseNumber: 'C-2023-089', title: 'قضية احتيال مالي', lawyer: 'أحمد محمد العلي', lawyerId: 1, client: 'عمر فاضل الديواني', status: 'closed', fees: 6000000, date: '2023-11-10', endDate: '2024-11-25', court: 'محكمة الجنايات', description: 'قضية احتيال مالي - تم الحكم لصالح الموكل', sessions: [] }
+        { id: 1, caseNumber: 'C-2024-001', title: 'قضية ميراث عقاري', lawyer: 'فاطمة حسن الزهراء', lawyerId: 2, client: 'محمد سعيد الكربلائي', status: 'active', fees: 5000000, startDate: '2024-01-15', court: 'محكمة الأحوال الشخصية', description: 'نزاع حول تقسيم الميراث العقاري', sessions: [] },
+        { id: 2, caseNumber: 'C-2024-002', title: 'دعوى تعويض عن حادث مروري', lawyer: 'أحمد محمد العلي', lawyerId: 1, client: 'سارة خالد البصري', status: 'active', fees: 3500000, startDate: '2024-02-10', court: 'محكمة البداءة', description: 'دعوى تعويض عن أضرار مادية وجسدية', sessions: [] },
+        { id: 3, caseNumber: 'C-2024-003', title: 'قضية نزاع تجاري', lawyer: 'علي كريم الجبوري', lawyerId: 3, client: 'شركة النور للتجارة', status: 'pending', fees: 8000000, startDate: '2024-03-05', court: 'محكمة التجارة', description: 'نزاع تجاري حول عقد توريد', sessions: [] },
+        { id: 4, caseNumber: 'C-2024-004', title: 'دعوى طلاق وحضانة', lawyer: 'زينب عبدالله النجفي', lawyerId: 4, client: 'مريم أحمد الموصلي', status: 'active', fees: 4000000, startDate: '2024-01-20', court: 'محكمة الأحوال الشخصية', description: 'دعوى طلاق مع طلب حضانة الأطفال', sessions: [] },
+        { id: 5, caseNumber: 'C-2023-089', title: 'قضية احتيال مالي', lawyer: 'أحمد محمد العلي', lawyerId: 1, client: 'عمر فاضل الديواني', status: 'closed', fees: 6000000, startDate: '2023-11-10', endDate: '2024-11-25', court: 'محكمة الجنايات', description: 'قضية احتيال مالي - تم الحكم لصالح الموكل', sessions: [] }
     ],
     clients: [
         { id: 1, name: 'محمد سعيد الكربلائي', phone: '07801112233', email: 'm.saeed@email.com', address: 'كربلاء - حي الحسين', idNumber: '19850512001', notes: 'موكل دائم - قضايا عقارية' },
@@ -400,67 +396,24 @@ function fillLogin(username, password) {
 }
 
 function showApp() {
-    console.log('🚀 بدء showApp...');
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'block';
     
-    if (!currentUser) {
-        console.error('❌ لا يوجد مستخدم مسجّل حالياً');
-        return;
-    }
-
-    console.log('✅ المستخدم الحالي:', currentUser);
-
-    const loginScreen = document.getElementById('loginScreen');
-    const mainApp = document.getElementById('mainApp');
+    // إزالة كلاس login-active من body
+    document.body.classList.remove('login-active');
     
-    console.log('📱 loginScreen:', loginScreen);
-    console.log('📱 mainApp:', mainApp);
+    document.getElementById('currentUserName').textContent = currentUser.name;
+    document.getElementById('currentUserRole').textContent = getRoleName(currentUser.role);
     
-    if (loginScreen) {
-        loginScreen.style.display = 'none';
-        loginScreen.style.visibility = 'hidden';
-        console.log('✅ تم إخفاء شاشة تسجيل الدخول');
-    }
+    // تحديث عناصر الإعدادات إذا كانت موجودة
+    const settingsName = document.getElementById('settingsName');
+    if (settingsName) settingsName.value = currentUser.name;
     
-    if (mainApp) {
-        mainApp.style.display = 'flex';
-        mainApp.style.visibility = 'visible';
-        mainApp.style.opacity = '1';
-        console.log('✅ تم إظهار التطبيق الرئيسي');
-    }
+    const settingsEmail = document.getElementById('settingsEmail');
+    if (settingsEmail) settingsEmail.value = currentUser.email;
     
-    // التأكد من ظهور الشريط الجانبي
-    const sidebar = document.getElementById('sidebar');
-    const mainContent = document.querySelector('.main-content');
-    const menuToggleBtn = document.getElementById('menuToggleBtn');
-    
-    // التحقق من الحالة المحفوظة
-    const sidebarHidden = localStorage.getItem('sidebarHidden') === 'true';
-    if (!sidebarHidden && sidebar) {
-        sidebar.classList.remove('hidden', 'sidebar-hidden');
-        sidebar.style.display = 'block';
-        sidebar.style.visibility = 'visible';
-        if (mainContent) mainContent.classList.remove('sidebar-hidden');
-        const icon = menuToggleBtn?.querySelector('.hamburger-icon');
-        if (icon) icon.textContent = '✕';
-        console.log('✅ تم إظهار الشريط الجانبي');
-    }
-    
-    const name = currentUser.name || currentUser.fullName || currentUser.username || '';
-    const email = currentUser.email || '';
-    const role = currentUser.role || 'admin';
-
-    const userNameEl = document.getElementById('currentUserName');
-    if (userNameEl) userNameEl.textContent = name;
-    const userRoleEl = document.getElementById('currentUserRole');
-    if (userRoleEl) userRoleEl.textContent = getRoleName(role);
-    const settingsNameEl = document.getElementById('settingsName');
-    if (settingsNameEl) settingsNameEl.value = name;
-    const settingsEmailEl = document.getElementById('settingsEmail');
-    if (settingsEmailEl) settingsEmailEl.value = email;
-    const settingsRoleEl = document.getElementById('settingsRole');
-    if (settingsRoleEl) settingsRoleEl.value = getRoleName(role);
-    
-    console.log('✅ تم تحديث معلومات المستخدم في الواجهة');
+    const settingsRole = document.getElementById('settingsRole');
+    if (settingsRole) settingsRole.value = getRoleName(currentUser.role);
     
     // إخفاء الأقسام غير المصرح بها
     applyPermissions();
@@ -472,23 +425,7 @@ function showApp() {
     renderClients();
     renderTransactions();
 
-    console.log('✅ تم تحديث جميع الأقسام');
-
     setupUXEnhancements();
-    // تطبيق وضع العرض المضغوط حسب التفضيلات أو ارتفاع الشاشة
-    applyCompactModeFromStorage?.();
-    
-    // التأكد من ظهور قسم لوحة التحكم
-    setTimeout(() => {
-        const dashboard = document.getElementById('dashboard');
-        if (dashboard) {
-            dashboard.classList.add('active');
-            dashboard.style.display = 'block';
-            console.log('✅ تم التأكد من ظهور لوحة التحكم');
-        }
-    }, 100);
-    
-    console.log('🎉 تم إكمال showApp بنجاح');
 }
 
 function applyPermissions() {
@@ -500,8 +437,8 @@ function applyPermissions() {
         if (useBackend && authToken) {
             const allowed = ['payment_from_client', 'payment_to_client', 'service_fee', 'expense'];
             const labelMap = {
-                'payment_from_client': 'دفعة من موكل',
-                'payment_to_client': 'دفعة لموكل',
+                'payment_from_client': 'دفعة من عميل',
+                'payment_to_client': 'دفعة لعميل',
                 'service_fee': 'رسوم خدمة',
                 'expense': 'مصروف عام/مرتبط'
             };
@@ -547,8 +484,12 @@ function applyPermissions() {
     // إظهار زر إدارة الصلاحيات للمدير فقط
     const permissionsNavBtn = document.getElementById('permissionsNavBtn');
     if (permissionsNavBtn) permissionsNavBtn.style.display = currentUser.role === 'admin' ? 'flex' : 'none';
+    
     const viewRestrictionsCard = document.getElementById('viewRestrictionsCard');
     if (viewRestrictionsCard) viewRestrictionsCard.style.display = currentUser.role === 'admin' ? 'block' : 'none';
+}
+
+// ==================== عرض تقييدات العرض ====================
 async function showViewRestrictionsModal() {
     let modules = [];
     if (useBackend && authToken) {
@@ -645,7 +586,6 @@ async function saveViewRestrictions(e) {
         showToast('⚠️ يتطلب الحفظ عبر الخادم', 'warning');
     }
 }
-}
 
 function generatePaymentUrl(clientName, amount, desc, caseNumber) {
     const tpl = database.paymentLinkTemplate || 'https://pay.example.com/invoice?client={client}&amount={amount}&desc={desc}&case={case}';
@@ -698,13 +638,6 @@ function saveCurrencySettings() {
         apiCall('/settings/currency', 'POST', { baseCurrency: base, exchangeRate: rate, showBoth });
     }
     showToast('✅ تم حفظ إعدادات العملة', 'success');
-    // مزامنة تلقائية مع قسم الدائن/المدين إن كان خيار المزامنة مفعلًا
-    if (database.syncDebtorRate !== false) {
-        database.exchangeRate = rate;
-        const input = document.getElementById('debtorExchangeRate');
-        if (input) input.value = rate;
-    }
-    updateLastUpdated('settings');
     renderDashboard?.();
     renderDebtorsCreditors?.();
     renderLawyers?.();
@@ -741,41 +674,25 @@ function logout() {
         document.getElementById('loginScreen').style.display = 'flex';
         document.getElementById('mainApp').style.display = 'none';
         document.getElementById('loginForm').reset();
+        
+        // إضافة كلاس login-active لـ body
+        document.body.classList.add('login-active');
+        
         showToast('👋 تم تسجيل الخروج بنجاح', 'success');
     }
 }
 
 // ==================== التنقل ====================
 function showSection(sectionId) {
-    console.log(`📍 الانتقال إلى قسم: ${sectionId}`);
-    
-    // 1. إخفاء جميع الأقسام بسرعة
-    document.querySelectorAll('.section').forEach(s => {
-        s.classList.remove('active');
-        s.style.display = 'none';
-    });
-    
-    // 2. إلغاء تفعيل جميع أزرار الملاحة
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     
-    // 3. إظهار القسم المطلوب فوراً
-    const targetSection = document.getElementById(sectionId);
-    if (targetSection) {
-        targetSection.style.display = 'block';
-        targetSection.classList.add('active');
-        console.log(`✅ تم عرض القسم: ${sectionId}`);
-    } else {
-        console.warn(`⚠️ لم يتم العثور على القسم: ${sectionId}`);
-        return;
-    }
+    document.getElementById(sectionId)?.classList.add('active');
+    document.querySelector(`[onclick="showSection('${sectionId}')"]`)?.classList.add('active');
     
-    // 4. تفعيل زر الملاحة
-    const navButton = document.querySelector(`[onclick="showSection('${sectionId}')"]`);
-    if (navButton) {
-        navButton.classList.add('active');
-    }
+    // التمرير إلى الأعلى
+    document.querySelector('.main-content').scrollTop = 0;
     
-    // 5. تحديث عنوان الصفحة
     const titles = {
         dashboard: 'لوحة التحكم',
         lawyers: 'إدارة المحامين',
@@ -788,109 +705,60 @@ function showSection(sectionId) {
         permissions: 'إدارة الصلاحيات المتقدمة'
     };
     
-    const pageTitle = document.getElementById('pageTitle');
-    if (pageTitle) {
-        pageTitle.textContent = titles[sectionId] || '';
-    }
+    document.getElementById('pageTitle').textContent = titles[sectionId] || '';
     
-    // 6. التمرير للأعلى
-    const mainContent = document.querySelector('.main-content');
-    if (mainContent) {
-        mainContent.scrollTop = 0;
-    }
-    window.scrollTo(0, 0);
+    // إغلاق القائمة الجانبية على الموبايل
+    closeSidebarOnMobile();
     
-    // 7. تحديث البيانات حسب القسم
-    setTimeout(() => {
-        if (sectionId === 'dashboard') { updateDashboard(); updateLastUpdated('dashboard'); }
-        if (sectionId === 'lawyers') { renderLawyers?.(); updateLastUpdated('lawyers'); }
-        if (sectionId === 'cases') { renderCases?.(); updateLastUpdated('cases'); }
-        if (sectionId === 'clients') { renderClients?.(); updateLastUpdated('clients'); }
-        if (sectionId === 'transactions') { renderTransactions?.(); updateLastUpdated('transactions'); }
-        if (sectionId === 'debtors') { renderDebtorsCreditors?.(); updateLastUpdated('debtors'); }
-        if (sectionId === 'reports') { renderReports?.(); updateLastUpdated('reports'); }
-        if (sectionId === 'settings') { applyCompactModeFromStorage?.(); }
-    }, 50);
-    
-    // 8. حفظ حالة القسم الحالي
-    currentSectionId = sectionId;
-    localStorage.setItem('lastSection', sectionId);
-    
-    console.log(`✅ تم الانتقال إلى قسم ${sectionId} بنجاح`);
-}
-        if (sectionId === 'transactions') { renderTransactions?.(); updateLastUpdated('transactions'); }
-        if (sectionId === 'debtors') { renderDebtorsCreditors(); /* last updated inside renderer */ }
-        if (sectionId === 'settings') applyCurrencySettingsToUI();
-        if (sectionId === 'permissions') renderPermissionsManagement();
-        
-        // التمرير النهائي للأعلى بعد التحديث
-        requestAnimationFrame(() => {
-            if (mainContent) {
-                mainContent.scrollTop = 0;
-            }
-        });
-    });
-}
-
-// ==================== وضع العرض المضغوط ====================
-function applyCompactModeFromStorage() {
-    const preferCompact = localStorage.getItem('compactMode') === 'true' || window.innerHeight < 800;
-    if (preferCompact) document.body.classList.add('compact');
-    else document.body.classList.remove('compact');
-    const toggle = document.getElementById('compactModeToggle');
-    if (toggle) toggle.checked = document.body.classList.contains('compact');
-}
-
-function setCompactMode(enabled) {
-    if (enabled) document.body.classList.add('compact');
-    else document.body.classList.remove('compact');
-    localStorage.setItem('compactMode', enabled ? 'true' : 'false');
-}
-
-// ==================== آخر تحديث ====================
-function updateLastUpdated(sectionId) {
-    const section = document.getElementById(sectionId);
-    if (!section) return;
-    const header = section.querySelector('.section-header') || section.firstElementChild;
-    if (!header) return;
-    let badge = header.querySelector('.last-updated');
-    if (!badge) {
-        badge = document.createElement('div');
-        badge.className = 'last-updated';
-        badge.style.marginTop = '8px';
-        badge.style.color = 'var(--text-light)';
-        badge.style.fontSize = '0.85em';
-        badge.style.display = 'flex';
-        badge.style.alignItems = 'center';
-        badge.style.gap = '6px';
-        header.appendChild(badge);
-    }
-    const now = new Date();
-    badge.textContent = `🕒 آخر تحديث: ${now.toLocaleString('ar-IQ')}`;
+    if (sectionId === 'dashboard') updateDashboard();
+    if (sectionId === 'debtors') renderDebtorsCreditors();
+    if (sectionId === 'settings') applyCurrencySettingsToUI();
+    if (sectionId === 'permissions') renderPermissionsManagement();
 }
 
 function toggleSidebarMenu() {
     const sidebar = document.getElementById('sidebar');
     const mainContent = document.querySelector('.main-content');
-    const menuToggleBtn = document.getElementById('menuToggleBtn');
     
-    sidebar.classList.toggle('hidden');
-    mainContent.classList.toggle('sidebar-hidden');
-    
-    // تحديث أيقونة الزر
-    const isHidden = sidebar.classList.contains('hidden');
-    const icon = menuToggleBtn?.querySelector('.hamburger-icon');
-    if (icon) {
-        icon.textContent = isHidden ? '☰' : '✕';
+    // للشاشات الصغيرة - عرض/إخفاء القائمة
+    if (window.innerWidth <= 768) {
+        sidebar.classList.toggle('sidebar-hidden');
+        
+        // إضافة overlay للشاشات الصغيرة
+        let overlay = document.getElementById('sidebarOverlay');
+        if (!overlay && !sidebar.classList.contains('sidebar-hidden')) {
+            overlay = document.createElement('div');
+            overlay.id = 'sidebarOverlay';
+            overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:999;';
+            overlay.onclick = () => toggleSidebarMenu();
+            document.body.appendChild(overlay);
+        } else if (overlay && sidebar.classList.contains('sidebar-hidden')) {
+            overlay.remove();
+        }
+    } else {
+        // للشاشات الكبيرة - تصغير/توسيع القائمة
+        sidebar.classList.toggle('hidden');
+        mainContent.classList.toggle('sidebar-hidden');
     }
     
     // حفظ الحالة
+    const isHidden = sidebar.classList.contains('hidden') || sidebar.classList.contains('sidebar-hidden');
     localStorage.setItem('sidebarHidden', isHidden);
 }
 
 function toggleSidebar() {
     // للتوافق مع الأجهزة المحمولة
-    document.getElementById('sidebar').classList.toggle('show');
+    toggleSidebarMenu();
+}
+
+// إغلاق القائمة عند النقر على عنصر في الشاشات الصغيرة
+function closeSidebarOnMobile() {
+    if (window.innerWidth <= 768) {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        if (sidebar) sidebar.classList.add('sidebar-hidden');
+        if (overlay) overlay.remove();
+    }
 }
 
 // ==================== لوحة التحكم ====================
@@ -1142,17 +1010,6 @@ function renderLawyers() {
     tbody.innerHTML = filtered.length > 0 
         ? rows + totalRow
         : '<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text-light)">لا يوجد محامين</td></tr>';
-
-    // تحديث قياسات قسم المحامين (من كامل البيانات)
-    try {
-        const allLawyers = database.lawyers || [];
-        const sumSalaries = allLawyers.reduce((s, l)=> s + (parseFloat(l.salary)||0), 0);
-        document.getElementById('metricLawyersCount').textContent = allLawyers.length;
-        document.getElementById('metricLawyersSalaries').innerHTML = formatAmountHTML(sumSalaries);
-        document.getElementById('metricLawyersCredit').innerHTML = formatAmountHTML(totalCredit);
-        document.getElementById('metricLawyersDebt').innerHTML = formatAmountHTML(totalDebt);
-        document.getElementById('metricLawyersNet').innerHTML = formatAmountHTML(totalCredit - totalDebt);
-    } catch(e) {}
 }
 
 function filterLawyers() {
@@ -1324,8 +1181,8 @@ function renderCases() {
                 <td>${c.lawyer}</td>
                 <td>${c.client}</td>
                 <td><span class="status-${c.status}">${getStatusText(c.status)}</span></td>
-                <td>${formatAmountHTML(parseFloat(c.fees))}</td>
-                <td>${new Date(c.startDate).toLocaleDateString('ar-IQ')}</td>
+                <td>${parseFloat(c.fees).toLocaleString('ar-IQ')} د.ع</td>
+                <td>${new Date(c.date).toLocaleDateString('ar-IQ')}</td>
                 <td>
                     <div class="action-btns">
                         <button class="btn-primary" onclick="printInvoice('case', ${c.id})" title="طباعة">🖨️</button>
@@ -1336,19 +1193,6 @@ function renderCases() {
             </tr>
         `).join('')
         : '<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-light)">لا توجد قضايا</td></tr>';
-
-    // تحديث قياسات قسم القضايا (من كامل البيانات)
-    try {
-        const all = database.cases || [];
-        const active = all.filter(c => c.status === 'active').length;
-        const pending = all.filter(c => c.status === 'pending').length;
-        const closed = all.filter(c => c.status === 'closed').length;
-        const totalFees = all.reduce((s,c)=> s + (parseFloat(c.fees)||0), 0);
-        const elA = document.getElementById('metricCasesActive'); if (elA) elA.textContent = active;
-        const elP = document.getElementById('metricCasesPending'); if (elP) elP.textContent = pending;
-        const elC = document.getElementById('metricCasesClosed'); if (elC) elC.textContent = closed;
-        const elF = document.getElementById('metricCasesFees'); if (elF) elF.innerHTML = formatAmountHTML(totalFees);
-    } catch(e) {}
 }
 
 function getStatusText(status) {
@@ -1388,9 +1232,9 @@ function showAddCaseModal() {
                 </select>
             </div>
             <div class="form-group">
-                <label>الموكل *</label>
+                <label>العميل *</label>
                 <select name="client" required>
-                    <option value="">اختر الموكل</option>
+                    <option value="">اختر العميل</option>
                     ${clientsOptions}
                 </select>
             </div>
@@ -1503,9 +1347,9 @@ function editCase(id) {
                 </select>
             </div>
             <div class="form-group">
-                <label>الموكل *</label>
+                <label>العميل *</label>
                 <select name="client" required>
-                    <option value="">اختر الموكل</option>
+                    <option value="">اختر العميل</option>
                     ${clientsOptions}
                 </select>
             </div>
@@ -1623,9 +1467,9 @@ function showCaseDetails(id) {
                 <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:15px">
                     <div><strong>العنوان:</strong> ${caseData.title}</div>
                     <div><strong>المحامي:</strong> ⚖️ ${caseData.lawyer}</div>
-                    <div><strong>الموكل:</strong> 👤 ${caseData.client}</div>
+                    <div><strong>العميل:</strong> 👤 ${caseData.client}</div>
                     <div><strong>المحكمة:</strong> 🏛️ ${caseData.court || '-'}</div>
-                    <div><strong>تاريخ البدء:</strong> 📅 ${new Date(caseData.date).toLocaleDateString('ar-IQ')}</div>
+                    <div><strong>تاريخ البدء:</strong> 📅 ${new Date(caseData.startDate).toLocaleDateString('ar-IQ')}</div>
                     <div><strong>الحالة:</strong> <span class="status-${caseData.status}">${getStatusText(caseData.status)}</span></div>
                 </div>
                 ${caseData.description ? `<div style="margin-top:15px;padding-top:15px;border-top:1px solid var(--border)"><strong>الوصف:</strong><br>${caseData.description}</div>` : ''}
@@ -1633,16 +1477,16 @@ function showCaseDetails(id) {
             
             <h3 style="margin:20px 0 15px;color:var(--success);border-right:4px solid var(--success);padding-right:10px">💰 الحالة المالية</h3>
             <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-bottom:20px">
-                <div style="background:linear-gradient(135deg,#10b981,#059669);color:white;padding:20px;border-radius:12px;text-align:center">
-                    <div style="font-size:1.4em;font-weight:900">${formatAmountHTML(totalIncome)}</div>
+                <div style="background:linear-gradient(135deg,#10b981,#059669);color:white;padding:15px;border-radius:12px;text-align:center">
+                    <div style="font-size:1.8em;font-weight:700">${formatAmountHTML(totalIncome)}</div>
                     <div style="opacity:0.9;font-size:0.9em">إجمالي الإيرادات</div>
                 </div>
-                <div style="background:linear-gradient(135deg,#ef4444,#dc2626);color:white;padding:20px;border-radius:12px;text-align:center">
-                    <div style="font-size:1.4em;font-weight:900">${formatAmountHTML(totalExpense)}</div>
+                <div style="background:linear-gradient(135deg,#ef4444,#dc2626);color:white;padding:15px;border-radius:12px;text-align:center">
+                    <div style="font-size:1.8em;font-weight:700">${formatAmountHTML(totalExpense)}</div>
                     <div style="opacity:0.9;font-size:0.9em">إجمالي المصروفات</div>
                 </div>
-                <div style="background:linear-gradient(135deg,${netProfit >= 0 ? '#8b5cf6,#7c3aed' : '#f59e0b,#d97706'});color:white;padding:20px;border-radius:12px;text-align:center">
-                    <div style="font-size:1.4em;font-weight:900">${formatAmountHTML(netProfit)}</div>
+                <div style="background:linear-gradient(135deg,${netProfit >= 0 ? '#8b5cf6,#7c3aed' : '#f59e0b,#d97706'});color:white;padding:15px;border-radius:12px;text-align:center">
+                    <div style="font-size:1.8em;font-weight:700">${formatAmountHTML(netProfit)}</div>
                     <div style="opacity:0.9;font-size:0.9em">صافي الربح</div>
                 </div>
             </div>
@@ -1691,7 +1535,7 @@ function showCaseDetails(id) {
     showModal();
 }
 
-// ==================== الموكلين ====================
+// ==================== العملاء ====================
 function renderClients() {
     const search = document.getElementById('clientSearch')?.value.toLowerCase() || '';
     const filtered = database.clients.filter(c => 
@@ -1699,7 +1543,7 @@ function renderClients() {
         c.phone.includes(search)
     );
     
-    // تحديث رصيد كل موكل
+    // تحديث رصيد كل عميل
     filtered.forEach(client => {
         const balance = calculateClientBalance(client.name);
         const clientInDb = database.clients.find(c => c.id === client.id);
@@ -1736,22 +1580,7 @@ function renderClients() {
             </div>
             `;
         }).join('')
-        : '<p style="text-align:center;color:var(--text-light);padding:40px">لا يوجد موكلين</p>';
-
-    // تحديث قياسات قسم الزبائن (من كامل البيانات)
-    try {
-        const all = database.clients || [];
-        // احسب الأرصدة مباشرة لضمان التزامن
-        const balances = all.map(c => calculateClientBalance(c.name));
-        const debtors = balances.filter(b => b > 0);
-        const creditors = balances.filter(b => b < 0);
-        const sumDebtors = debtors.reduce((s,b)=> s + b, 0);
-        const sumCreditors = Math.abs(creditors.reduce((s,b)=> s + b, 0));
-        const elCount = document.getElementById('metricClientsCount'); if (elCount) elCount.textContent = all.length;
-        const elDeb = document.getElementById('metricClientsDebtors'); if (elDeb) elDeb.innerHTML = formatAmountHTML(sumDebtors);
-        const elCre = document.getElementById('metricClientsCreditors'); if (elCre) elCre.innerHTML = formatAmountHTML(sumCreditors);
-        const elNet = document.getElementById('metricClientsNet'); if (elNet) elNet.innerHTML = formatAmountHTML(sumDebtors - sumCreditors);
-    } catch(e) {}
+        : '<p style="text-align:center;color:var(--text-light);padding:40px">لا يوجد عملاء</p>';
 }
 
 function calculateClientBalance(clientName) {
@@ -1761,16 +1590,16 @@ function calculateClientBalance(clientName) {
     clientTransactions.forEach(t => {
         const amount = parseFloat(t.amount);
         if (t.type === 'payment_from_client') {
-            // دفع من الموكل لنا = يقلل من دينه علينا
+            // دفع من العميل لنا = يقلل من دينه علينا
             balance -= amount;
         } else if (t.type === 'payment_to_client') {
-            // دفع منا للموكل = يزيد من دينه علينا
+            // دفع منا للعميل = يزيد من دينه علينا
             balance += amount;
         } else if (t.type === 'service_fee') {
-            // رسوم خدمة = يزيد ما يدين به الموكل للمكتب
+            // رسوم خدمة = يزيد ما يدين به العميل للمكتب
             balance += amount;
         } else if (t.type === 'expense') {
-            // مصروف مرتبط بموكل = يزيد ما يدين به الموكل للمكتب
+            // مصروف مرتبط بعميل = يزيد ما يدين به العميل للمكتب
             balance += amount;
         }
     });
@@ -1784,7 +1613,7 @@ function filterClients() {
 
 function showAddClientModal() {
     if (!checkPermission('clients', 'add')) return;
-    document.getElementById('modalTitle').textContent = '➕ إضافة موكل جديد';
+    document.getElementById('modalTitle').textContent = '➕ إضافة عميل جديد';
     document.getElementById('modalBody').innerHTML = `
         <form id="clientForm" onsubmit="saveClient(event)">
             <div class="form-group">
@@ -1832,7 +1661,7 @@ async function saveClient(e) {
             renderClients();
             updateDashboard();
             closeModal();
-            showToast('✅ تم إضافة الموكل بنجاح', 'success');
+            showToast('✅ تم إضافة العميل بنجاح', 'success');
             return;
         }
     }
@@ -1844,7 +1673,7 @@ async function saveClient(e) {
     renderClients();
     updateDashboard();
     closeModal();
-    showToast('✅ تم إضافة الموكل بنجاح (محلي)', 'success');
+    showToast('✅ تم إضافة العميل بنجاح (محلي)', 'success');
 }
 
 function editClient(id) {
@@ -1852,7 +1681,7 @@ function editClient(id) {
     const client = database.clients.find(c => c.id === id);
     if (!client) return;
     
-    document.getElementById('modalTitle').textContent = '✏️ تعديل بيانات الموكل';
+    document.getElementById('modalTitle').textContent = '✏️ تعديل بيانات العميل';
     document.getElementById('modalBody').innerHTML = `
         <form id="clientForm" onsubmit="updateClient(event, ${id})">
             <div class="form-group">
@@ -1892,14 +1721,14 @@ function updateClient(e, id) {
         saveData();
         renderClients();
         closeModal();
-        showToast('✅ تم تحديث بيانات الموكل', 'success');
+        showToast('✅ تم تحديث بيانات العميل', 'success');
     }
 }
 
 async function deleteClient(id) {
     if (!checkPermission('clients', 'delete')) return;
-    if (confirm('هل أنت متأكد من حذف هذا الموكل؟')) {
-        logActivity('delete_client', `حذف موكل: ${database.clients.find(c => c.id === id)?.name}`);
+    if (confirm('هل أنت متأكد من حذف هذا العميل؟')) {
+        logActivity('delete_client', `حذف عميل: ${database.clients.find(c => c.id === id)?.name}`);
         
         // Try API first
         if (useBackend && authToken) {
@@ -1909,7 +1738,7 @@ async function deleteClient(id) {
                 saveData();
                 renderClients();
                 updateDashboard();
-                showToast('🗑️ تم حذف الموكل', 'success');
+                showToast('🗑️ تم حذف العميل', 'success');
                 return;
             }
         }
@@ -1919,7 +1748,7 @@ async function deleteClient(id) {
         saveData();
         renderClients();
         updateDashboard();
-        showToast('🗑️ تم حذف الموكل (محلي)', 'success');
+        showToast('🗑️ تم حذف العميل (محلي)', 'success');
     }
 }
 
@@ -1934,8 +1763,8 @@ function viewClientAccount(clientId) {
     const balance = calculateClientBalance(client.name);
     const balanceClass = balance > 0 ? 'debtor' : balance < 0 ? 'creditor' : 'balanced';
     const balanceIcon = balance > 0 ? '💰' : balance < 0 ? '⚠️' : '✅';
-    const balanceText = balance > 0 ? `عليه دين لنا: ${formatAmountHTML(Math.abs(balance))}` : 
-                       balance < 0 ? `له دين علينا: ${formatAmountHTML(Math.abs(balance))}` : 
+    const balanceText = balance > 0 ? `عليه دين لنا: ${Math.abs(balance).toLocaleString('ar-IQ')} د.ع` : 
+                       balance < 0 ? `له دين علينا: ${Math.abs(balance).toLocaleString('ar-IQ')} د.ع` : 
                        'لا يوجد دين';
     
     let runningBalance = 0;
@@ -1959,8 +1788,8 @@ function viewClientAccount(clientId) {
             }
             
             const typeLabels = {
-                'payment_from_client': '💵 دفعة من الموكل',
-                'payment_to_client': '💰 دفعة للموكل',
+                'payment_from_client': '💵 دفعة من العميل',
+                'payment_to_client': '💰 دفعة للعميل',
                 'service_fee': '📋 رسوم خدمة',
                 'expense': '💸 مصروف مرتبط'
             };
@@ -1978,7 +1807,7 @@ function viewClientAccount(clientId) {
         }).join('')
         : '<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--text-light)">لا توجد معاملات</td></tr>';
     
-    document.getElementById('modalTitle').textContent = `💳 حساب الموكل: ${client.name}`;
+    document.getElementById('modalTitle').textContent = `💳 حساب العميل: ${client.name}`;
     document.getElementById('modalBody').innerHTML = `
         <div style="margin-bottom:30px">
             <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin-bottom:20px">
@@ -2020,10 +1849,10 @@ function viewClientAccount(clientId) {
         
         <div style="margin-top:20px;display:flex;gap:10px">
             <button class="btn-primary" onclick="addQuickPayment(${clientId}, 'from')" style="flex:1">
-                💵 تسجيل دفعة من الموكل
+                💵 تسجيل دفعة من العميل
             </button>
             <button class="btn-primary" onclick="addQuickPayment(${clientId}, 'to')" style="flex:1">
-                💰 تسجيل دفعة للموكل
+                💰 تسجيل دفعة للعميل
             </button>
         </div>
 
@@ -2118,7 +1947,7 @@ function renderTransactions() {
                 <td><span class="transaction-${typeClass}">${typeLabels[t.type] || t.type}</span></td>
                 <td>${t.client ? `<strong>${t.client}</strong>` : '-'}</td>
                 <td>${lawyerName}</td>
-                <td class="transaction-${typeClass}"><strong>${formatAmountHTML(parseFloat(t.amount))}</strong></td>
+                <td class="transaction-${typeClass}"><strong>${parseFloat(t.amount).toLocaleString('ar-IQ')} د.ع</strong></td>
                 <td>${t.description}</td>
                 <td>${t.caseNumber || '-'}</td>
                 <td>
@@ -2132,19 +1961,6 @@ function renderTransactions() {
             `;
         }).join('')
         : '<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-light)">لا توجد معاملات</td></tr>';
-
-    // قياسات قسم المعاملات (من كامل البيانات)
-    try {
-        const tx = database.transactions || [];
-        const incomeTypes = ['income','service_fee','payment_from_client'];
-        const expenseTypes = ['expense','payment_to_client','salary','commission','withdrawal'];
-        const incomeSum = tx.filter(x=> incomeTypes.includes((x.type||'').toLowerCase())).reduce((s,a)=> s + (parseFloat(a.amount)||0), 0);
-        const expenseSum = tx.filter(x=> expenseTypes.includes((x.type||'').toLowerCase())).reduce((s,a)=> s + (parseFloat(a.amount)||0), 0);
-        const elI = document.getElementById('metricTxIncome'); if (elI) elI.innerHTML = formatAmountHTML(incomeSum);
-        const elE = document.getElementById('metricTxExpense'); if (elE) elE.innerHTML = formatAmountHTML(expenseSum);
-        const elN = document.getElementById('metricTxNet'); if (elN) elN.innerHTML = formatAmountHTML(incomeSum - expenseSum);
-        const elC = document.getElementById('metricTxCount'); if (elC) elC.textContent = tx.length;
-    } catch(e) {}
 }
 
 function filterTransactions() {
@@ -2177,9 +1993,9 @@ function showAddTransactionModal() {
                 </select>
             </div>
             <div class="form-group" id="clientGroup" style="display:none">
-                <label>👤 الموكل *</label>
+                <label>👤 العميل *</label>
                 <select name="client" id="clientSelect">
-                    <option value="">اختر الموكل</option>
+                    <option value="">اختر العميل</option>
                     ${clientsOptions}
                 </select>
             </div>
@@ -2494,17 +2310,17 @@ function generateFinancialReport(from, to) {
             
             <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:30px">
                 <div style="padding:25px;background:linear-gradient(135deg,#10b981,#059669);color:white;border-radius:15px;text-align:center;box-shadow:0 4px 15px rgba(16,185,129,0.3)">
-                    <div style="font-size:1.6em;font-weight:900;margin-bottom:5px">${formatAmountHTML(income)}</div>
+                    <div style="font-size:2.5em;font-weight:900;margin-bottom:5px">${income.toLocaleString('ar-IQ')}</div>
                     <div style="font-size:1.1em;opacity:0.9">💰 إجمالي الإيرادات</div>
                     <div style="font-size:0.85em;opacity:0.7;margin-top:5px">${transactions.filter(t => t.type === 'income' || t.type === 'service_fee' || t.type === 'payment_from_client').length} معاملة</div>
                 </div>
                 <div style="padding:25px;background:linear-gradient(135deg,#ef4444,#dc2626);color:white;border-radius:15px;text-align:center;box-shadow:0 4px 15px rgba(239,68,68,0.3)">
-                    <div style="font-size:1.6em;font-weight:900;margin-bottom:5px">${formatAmountHTML(expense)}</div>
+                    <div style="font-size:2.5em;font-weight:900;margin-bottom:5px">${expense.toLocaleString('ar-IQ')}</div>
                     <div style="font-size:1.1em;opacity:0.9">💸 إجمالي المصروفات</div>
                     <div style="font-size:0.85em;opacity:0.7;margin-top:5px">${transactions.filter(t => t.type === 'expense' || t.type === 'payment_to_client' || t.type === 'salary').length} معاملة</div>
                 </div>
                 <div style="padding:25px;background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:white;border-radius:15px;text-align:center;box-shadow:0 4px 15px rgba(139,92,246,0.3)">
-                    <div style="font-size:1.6em;font-weight:900;margin-bottom:5px">${formatAmountHTML(balance)}</div>
+                    <div style="font-size:2.5em;font-weight:900;margin-bottom:5px">${balance.toLocaleString('ar-IQ')}</div>
                     <div style="font-size:1.1em;opacity:0.9">📈 الرصيد الصافي</div>
                     <div style="font-size:0.85em;opacity:0.7;margin-top:5px">${((income > 0 ? balance/income : 0) * 100).toFixed(1)}% هامش الربح</div>
                 </div>
@@ -2514,35 +2330,35 @@ function generateFinancialReport(from, to) {
             <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-bottom:30px">
                 <div style="background:var(--bg);padding:15px;border-radius:10px">
                     <div style="color:var(--text-light);font-size:0.9em;margin-bottom:5px">دفعات من موكلين</div>
-                    <div style="font-size:1.1em;font-weight:700;color:var(--success)">${formatAmountHTML(byType.payment_from_client)}</div>
+                    <div style="font-size:1.5em;font-weight:700;color:var(--success)">${byType.payment_from_client.toLocaleString('ar-IQ')} د.ع</div>
                 </div>
                 <div style="background:var(--bg);padding:15px;border-radius:10px">
                     <div style="color:var(--text-light);font-size:0.9em;margin-bottom:5px">رسوم خدمات</div>
-                    <div style="font-size:1.1em;font-weight:700;color:var(--info)">${formatAmountHTML(byType.service_fee)}</div>
+                    <div style="font-size:1.5em;font-weight:700;color:var(--info)">${byType.service_fee.toLocaleString('ar-IQ')} د.ع</div>
                 </div>
                 <div style="background:var(--bg);padding:15px;border-radius:10px">
                     <div style="color:var(--text-light);font-size:0.9em;margin-bottom:5px">عمولات</div>
-                    <div style="font-size:1.1em;font-weight:700;color:var(--success)">${formatAmountHTML(byType.commission)}</div>
+                    <div style="font-size:1.5em;font-weight:700;color:var(--success)">${byType.commission.toLocaleString('ar-IQ')} د.ع</div>
                 </div>
                 <div style="background:var(--bg);padding:15px;border-radius:10px">
                     <div style="color:var(--text-light);font-size:0.9em;margin-bottom:5px">إيرادات عامة</div>
-                    <div style="font-size:1.1em;font-weight:700;color:var(--success)">${formatAmountHTML(byType.income)}</div>
+                    <div style="font-size:1.5em;font-weight:700;color:var(--success)">${byType.income.toLocaleString('ar-IQ')} د.ع</div>
                 </div>
                 <div style="background:var(--bg);padding:15px;border-radius:10px">
                     <div style="color:var(--text-light);font-size:0.9em;margin-bottom:5px">دفعات لموكلين</div>
-                    <div style="font-size:1.1em;font-weight:700;color:var(--danger)">${formatAmountHTML(byType.payment_to_client)}</div>
+                    <div style="font-size:1.5em;font-weight:700;color:var(--danger)">${byType.payment_to_client.toLocaleString('ar-IQ')} د.ع</div>
                 </div>
                 <div style="background:var(--bg);padding:15px;border-radius:10px">
                     <div style="color:var(--text-light);font-size:0.9em;margin-bottom:5px">مصروفات عامة</div>
-                    <div style="font-size:1.1em;font-weight:700;color:var(--danger)">${formatAmountHTML(byType.expense)}</div>
+                    <div style="font-size:1.5em;font-weight:700;color:var(--danger)">${byType.expense.toLocaleString('ar-IQ')} د.ع</div>
                 </div>
                 <div style="background:var(--bg);padding:15px;border-radius:10px">
                     <div style="color:var(--text-light);font-size:0.9em;margin-bottom:5px">رواتب المحامين</div>
-                    <div style="font-size:1.1em;font-weight:700;color:var(--warning)">${formatAmountHTML(byType.salary)}</div>
+                    <div style="font-size:1.5em;font-weight:700;color:var(--warning)">${byType.salary.toLocaleString('ar-IQ')} د.ع</div>
                 </div>
                 <div style="background:var(--bg);padding:15px;border-radius:10px">
                     <div style="color:var(--text-light);font-size:0.9em;margin-bottom:5px">سحوبات</div>
-                    <div style="font-size:1.1em;font-weight:700;color:var(--danger)">${formatAmountHTML(byType.withdrawal)}</div>
+                    <div style="font-size:1.5em;font-weight:700;color:var(--danger)">${byType.withdrawal.toLocaleString('ar-IQ')} د.ع</div>
                 </div>
             </div>
             
@@ -2567,7 +2383,7 @@ function generateFinancialReport(from, to) {
                                 <td>${t.client || t.lawyer || '-'}</td>
                                 <td>${t.caseNumber || '-'}</td>
                                 <td class="${t.type.includes('payment_to') || t.type === 'expense' || t.type === 'salary' ? 'transaction-expense' : 'transaction-income'}">
-                                    <strong>${formatAmountHTML(parseFloat(t.amount))}</strong>
+                                    <strong>${parseFloat(t.amount).toLocaleString('ar-IQ')} د.ع</strong>
                                 </td>
                                 <td>${t.description || '-'}</td>
                             </tr>
@@ -2692,34 +2508,42 @@ function generateLawyersReport() {
                                     ${l.closedCases}
                                 </span>
                             </td>
-                            <td style="color:var(--primary);font-weight:700">${formatAmountHTML(salary)}</td>
-                            <td class="transaction-income" style="font-weight:700">${formatAmountHTML(credit)}</td>
-                            <td class="transaction-expense" style="font-weight:700">${formatAmountHTML(debt)}</td>
-                            <td class="${l.balance >= 0 ? 'transaction-income' : 'transaction-expense'}"><strong>${formatAmountHTML(l.balance)}</strong></td>
+                            <td style="color:var(--primary);font-weight:700">
+                                ${salary.toLocaleString('ar-IQ')} د.ع
+                            </td>
+                            <td class="transaction-income" style="font-weight:700">
+                                ${credit.toLocaleString('ar-IQ')} د.ع
+                            </td>
+                            <td class="transaction-expense" style="font-weight:700">
+                                ${debt.toLocaleString('ar-IQ')} د.ع
+                            </td>
+                            <td class="${l.balance >= 0 ? 'transaction-income' : 'transaction-expense'}">
+                                <strong>${l.balance.toLocaleString('ar-IQ')} د.ع</strong>
+                            </td>
                         </tr>
                     `;}).join('')}
                     <tr style="background:linear-gradient(135deg,#667eea,#764ba2);color:white;font-weight:900;font-size:1.1em">
                         <td colspan="3" style="text-align:center">📊 المجموع الإجمالي</td>
                         <td><strong>${lawyersData.reduce((s, l) => s + l.activeCases, 0)}</strong></td>
                         <td><strong>${lawyersData.reduce((s, l) => s + l.closedCases, 0)}</strong></td>
-                        <td>${formatAmountHTML(lawyersData.reduce((s, l) => s + (parseFloat(l.salary) || 0), 0))}</td>
-                        <td>${formatAmountHTML(lawyersData.map(l => {
+                        <td>${lawyersData.reduce((s, l) => s + (parseFloat(l.salary) || 0), 0).toLocaleString('ar-IQ')} د.ع</td>
+                        <td>${lawyersData.map(l => {
                             const lawyerTransactions = database.transactions.filter(t => 
                                 t.lawyerId === l.id || t.lawyer === l.name || t.lawyerName === l.name
                             );
                             return lawyerTransactions
                                 .filter(t => t.type === 'salary' || t.type === 'service_fee' || t.type === 'income')
                                 .reduce((sum, t) => sum + parseFloat(t.amount || 0), 0);
-                        }).reduce((a, b) => a + b, 0))}</td>
-                        <td>${formatAmountHTML(lawyersData.map(l => {
+                        }).reduce((a, b) => a + b, 0).toLocaleString('ar-IQ')} د.ع</td>
+                        <td>${lawyersData.map(l => {
                             const lawyerTransactions = database.transactions.filter(t => 
                                 t.lawyerId === l.id || t.lawyer === l.name || t.lawyerName === l.name
                             );
                             return lawyerTransactions
                                 .filter(t => t.type === 'expense' || t.type === 'payment_to_client')
                                 .reduce((sum, t) => sum + parseFloat(t.amount || 0), 0);
-                        }).reduce((a, b) => a + b, 0))}</td>
-                        <td><strong>${formatAmountHTML(totalAllBalance)}</strong></td>
+                        }).reduce((a, b) => a + b, 0).toLocaleString('ar-IQ')} د.ع</td>
+                        <td><strong>${totalAllBalance.toLocaleString('ar-IQ')} د.ع</strong></td>
                     </tr>
                 </tbody>
             </table>
@@ -2735,7 +2559,7 @@ function generateCasesReport(from, to) {
     let cases = database.cases;
     
     if (from && to) {
-        cases = cases.filter(c => c.date >= from && c.date <= to);
+        cases = cases.filter(c => c.startDate >= from && c.startDate <= to);
     }
     
     const active = cases.filter(c => c.status === 'active');
@@ -2782,15 +2606,15 @@ function generateCasesReport(from, to) {
             
             <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:30px">
                 <div style="padding:20px;background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:white;border-radius:12px;text-align:center;box-shadow:0 4px 15px rgba(139,92,246,0.3)">
-                    <div style="font-size:1.4em;font-weight:900">${formatAmountHTML(totalFees)}</div>
+                    <div style="font-size:1.8em;font-weight:900">${totalFees.toLocaleString('ar-IQ')}</div>
                     <div style="font-size:1.1em;opacity:0.9">إجمالي الأتعاب</div>
                 </div>
                 <div style="padding:20px;background:linear-gradient(135deg,#10b981,#059669);color:white;border-radius:12px;text-align:center;box-shadow:0 4px 15px rgba(16,185,129,0.3)">
-                    <div style="font-size:1.4em;font-weight:900">${formatAmountHTML(totalIncome)}</div>
+                    <div style="font-size:1.8em;font-weight:900">${totalIncome.toLocaleString('ar-IQ')}</div>
                     <div style="font-size:1.1em;opacity:0.9">الإيرادات الفعلية</div>
                 </div>
                 <div style="padding:20px;background:linear-gradient(135deg,#ef4444,#dc2626);color:white;border-radius:12px;text-align:center;box-shadow:0 4px 15px rgba(239,68,68,0.3)">
-                    <div style="font-size:1.4em;font-weight:900">${formatAmountHTML(totalExpense)}</div>
+                    <div style="font-size:1.8em;font-weight:900">${totalExpense.toLocaleString('ar-IQ')}</div>
                     <div style="font-size:1.1em;opacity:0.9">المصروفات</div>
                 </div>
             </div>
@@ -2829,9 +2653,11 @@ function generateCasesReport(from, to) {
                             <td>⚖️ ${c.lawyer}</td>
                             <td>👤 ${c.client}</td>
                             <td><span class="status-${c.status}">${getStatusText(c.status)}</span></td>
-                            <td>${formatAmountHTML(parseFloat(c.fees || 0))}</td>
-                            <td class="transaction-income"><strong>${formatAmountHTML(caseIncome)}</strong></td>
-                            <td class="${caseProfit >= 0 ? 'transaction-income' : 'transaction-expense'}"><strong>${formatAmountHTML(caseProfit)}</strong></td>
+                            <td>${parseFloat(c.fees || 0).toLocaleString('ar-IQ')} د.ع</td>
+                            <td class="transaction-income"><strong>${caseIncome.toLocaleString('ar-IQ')} د.ع</strong></td>
+                            <td class="${caseProfit >= 0 ? 'transaction-income' : 'transaction-expense'}">
+                                <strong>${caseProfit.toLocaleString('ar-IQ')} د.ع</strong>
+                            </td>
                         </tr>
                     `;
                 }).join('')}
@@ -2906,9 +2732,9 @@ function generateClientsReport(from, to) {
                 ${rows.map(r => `
                     <tr>
                         <td><strong>${r.client.name}</strong></td>
-                        <td class="transaction-income"><strong>${formatAmountHTML(r.commission)}</strong></td>
-                        <td class="transaction-expense"><strong>${formatAmountHTML(r.withdrawal)}</strong></td>
-                        <td class="${r.balance >= 0 ? 'transaction-income' : 'transaction-expense'}"><strong>${formatAmountHTML(r.balance)}</strong></td>
+                        <td class="transaction-income"><strong>${r.commission.toLocaleString('ar-IQ')} د.ع</strong></td>
+                        <td class="transaction-expense"><strong>${r.withdrawal.toLocaleString('ar-IQ')} د.ع</strong></td>
+                        <td class="${r.balance >= 0 ? 'transaction-income' : 'transaction-expense'}"><strong>${r.balance.toLocaleString('ar-IQ')} د.ع</strong></td>
                         <td>${r.count}</td>
                     </tr>
                     <tr>
@@ -2929,7 +2755,7 @@ function generateClientsReport(from, to) {
                                             <tr>
                                                 <td>${new Date(t.date).toLocaleDateString('ar-IQ')}</td>
                                                 <td>${getTransactionTypeText(t.type)}</td>
-                                                <td class="${t.type === 'commission' ? 'transaction-income' : 'transaction-expense'}"><strong>${formatAmountHTML(parseFloat(t.amount))}</strong></td>
+                                                <td class="${t.type === 'commission' ? 'transaction-income' : 'transaction-expense'}"><strong>${parseFloat(t.amount).toLocaleString('ar-IQ')} د.ع</strong></td>
                                                 <td>${t.description || t.notes || '-'}</td>
                                                 <td>${t.caseNumber || '-'}</td>
                                             </tr>
@@ -3365,7 +3191,7 @@ function generateClientInvoice(client, transactions, balance, company) {
                 
                 <div class="client-info">
                     <div class="info-row">
-                        <div class="info-label">اسم الموكل:</div>
+                        <div class="info-label">اسم العميل:</div>
                         <div class="info-value">${client.name}</div>
                     </div>
                     <div class="info-row">
@@ -3381,7 +3207,7 @@ function generateClientInvoice(client, transactions, balance, company) {
                 </div>
                 
                 <div class="balance-box">
-                    <div class="balance-amount">${formatAmountHTML(Math.abs(balance))}</div>
+                    <div class="balance-amount">${Math.abs(balance).toLocaleString('ar-IQ')} د.ع</div>
                     <div class="balance-label">${balance > 0 ? 'له دين علينا' : balance < 0 ? 'عليه دين لنا' : 'لا يوجد دين'}</div>
                 </div>
                 
@@ -3656,7 +3482,7 @@ function generateCaseInvoice(caseData, company) {
                         <div class="detail-value">${caseData.lawyer}</div>
                     </div>
                     <div class="detail-row">
-                        <div class="detail-label"><span>👤</span> الموكل:</div>
+                        <div class="detail-label"><span>👤</span> العميل:</div>
                         <div class="detail-value">${caseData.client}</div>
                     </div>
                     <div class="detail-row">
@@ -3715,7 +3541,7 @@ function generateCaseInvoice(caseData, company) {
                             <tbody>
                                 ${transactions.map(t => {
                                     const typeLabels = {
-                                        'payment_from_client': '💵 دفعة من موكل',
+                                        'payment_from_client': '💵 دفعة من عميل',
                                         'payment_to_client': '💸 دفعة لموكل',
                                         'service_fee': '💰 رسوم خدمة',
                                         'expense': '📤 مصروف',
@@ -3726,7 +3552,7 @@ function generateCaseInvoice(caseData, company) {
                                             <td>${new Date(t.date).toLocaleDateString('ar-IQ')}</td>
                                             <td>${typeLabels[t.type] || t.type}</td>
                                             <td>${t.description}</td>
-                                            <td style="font-weight:700;color:${t.type.includes('from') || t.type === 'income' ? '#10b981' : '#ef4444'}">${formatAmountHTML(parseFloat(t.amount))}</td>
+                                            <td style="font-weight:700;color:${t.type.includes('from') || t.type === 'income' ? '#10b981' : '#ef4444'}">${parseFloat(t.amount).toLocaleString('ar-IQ')} د.ع</td>
                                         </tr>
                                     `;
                                 }).join('')}
@@ -4162,7 +3988,7 @@ function generatePDFContent(type) {
             <table>
                 <thead><tr><th>رقم القضية</th><th>العنوان</th><th>المحامي</th><th>الموكل</th><th>الحالة</th><th>الأتعاب</th></tr></thead>
                 <tbody>
-                    ${database.cases.map(c => `<tr><td>${c.caseNumber}</td><td>${c.title}</td><td>${c.lawyer}</td><td>${c.client}</td><td>${getStatusText(c.status)}</td><td>${formatAmountHTML(parseFloat(c.fees))}</td></tr>`).join('')}
+                    ${database.cases.map(c => `<tr><td>${c.caseNumber}</td><td>${c.title}</td><td>${c.lawyer}</td><td>${c.client}</td><td>${getStatusText(c.status)}</td><td>${parseFloat(c.fees).toLocaleString('ar-IQ')}</td></tr>`).join('')}
                 </tbody>
             </table>
         `;
@@ -4632,16 +4458,15 @@ window.addEventListener('DOMContentLoaded', function() {
         document.body.classList.add('dark-theme');
     }
     
-    // استعادة حالة القائمة الجانبية - فقط إذا كانت مخفية
+    // استعادة حالة القائمة الجانبية
     const sidebarState = localStorage.getItem('sidebarHidden') === 'true';
-    const sidebar = document.getElementById('sidebar');
-    const mainContent = document.querySelector('.main-content');
-    const menuToggleBtn = document.getElementById('menuToggleBtn');
-    
-    if (sidebarState && sidebar && mainContent) {
-        // فقط إخفاء الشريط إذا كان المستخدم قد أخفاه سابقاً
-        sidebar.classList.add('hidden');
-        mainContent.classList.add('sidebar-hidden');
+    if (sidebarState) {
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.querySelector('.main-content');
+        const menuToggleBtn = document.getElementById('menuToggleBtn');
+        
+        if (sidebar) sidebar.classList.add('sidebar-hidden');
+        if (mainContent) mainContent.classList.add('sidebar-collapsed');
         
         const icon = menuToggleBtn?.querySelector('.hamburger-icon');
         if (icon) icon.textContent = '☰';
@@ -4673,8 +4498,6 @@ window.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             showApp();
-            // تأكيد تزامن حالة زر الوضع المضغوط مع الحالة الحالية
-            applyCompactModeFromStorage?.();
         } catch (e) {
             console.error('خطأ في تحميل بيانات المستخدم');
             localStorage.removeItem('currentUser');
@@ -4688,22 +4511,49 @@ window.addEventListener('DOMContentLoaded', function() {
 function calculateLawyerBalance(lawyerId) {
     const lawyer = database.lawyers.find(l => l.id === lawyerId);
     if (!lawyer) return 0;
-
-    // اجلب كل معاملات هذا المحامي (بالاسم أو بالمعرف)
-    const lawyerTransactions = database.transactions.filter(t =>
+    
+    // حساب المعاملات المتعلقة بالمحامي
+    const lawyerTransactions = database.transactions.filter(t => 
         t.lawyerId === lawyerId || t.lawyer === lawyer.name || t.lawyerName === lawyer.name
     );
-
-    // توحيد التصنيف: الدائن = ما يُسجّل لصالح المحامي، المدين = ما يُسجّل عليه
-    const credit = lawyerTransactions
-        .filter(t => t.type === 'salary' || t.type === 'service_fee' || t.type === 'income')
-        .reduce((sum, t) => sum + (parseFloat(t.amount) || 0), 0);
-
-    const debt = lawyerTransactions
-        .filter(t => t.type === 'expense' || t.type === 'payment_to_client')
-        .reduce((sum, t) => sum + (parseFloat(t.amount) || 0), 0);
-
-    return credit - debt;
+    
+    let balance = 0;
+    let totalIncome = 0;
+    let totalExpense = 0;
+    
+    lawyerTransactions.forEach(t => {
+        const amount = parseFloat(t.amount) || 0;
+        
+        // معاملات خاصة بالمحامي
+        switch(t.type) {
+            case 'lawyer_salary': // دفع راتب
+            case 'lawyer_payment': // دفع للمحامي
+                balance -= amount; // نقص من الرصيد (مدين)
+                totalExpense += amount;
+                break;
+            case 'lawyer_commission': // عمولة للمحامي
+            case 'lawyer_bonus': // مكافأة
+                balance += amount; // زيادة على الرصيد (دائن)
+                totalIncome += amount;
+                break;
+            case 'lawyer_deduction': // خصم من المحامي
+                balance += amount; // دائن (يجب أن يدفع)
+                totalIncome += amount;
+                break;
+            // معاملات عامة مرتبطة بالمحامي
+            case 'service_fee': // رسوم خدمة قام بها المحامي
+            case 'income': // إيراد عام
+            case 'payment_from_client': // دفعة من عميل
+                totalIncome += amount;
+                break;
+            case 'expense': // مصروف
+            case 'payment_to_client': // دفعة لموكل
+                totalExpense += amount;
+                break;
+        }
+    });
+    
+    return balance;
 }
 
 // حساب ملخص المحامين المالي
@@ -4817,11 +4667,11 @@ function showLawyerFullReport(lawyerId) {
             <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin-bottom:20px">
                 <div style="background:var(--bg);padding:20px;border-radius:12px;border:2px solid var(--border)">
                     <div style="color:var(--text-light);font-size:0.9em;margin-bottom:8px">💼 الراتب الشهري</div>
-                    <div style="font-size:2em;font-weight:900;color:var(--primary)">${formatAmountHTML(salary)}</div>
+                    <div style="font-size:2em;font-weight:900;color:var(--primary)">${salary.toLocaleString('ar-IQ')} د.ع</div>
                 </div>
                 <div style="background:var(--bg);padding:20px;border-radius:12px;border:2px solid var(--border)">
                     <div style="color:var(--text-light);font-size:0.9em;margin-bottom:8px">💵 إجمالي الأتعاب المتفق عليها</div>
-                    <div style="font-size:1.6em;font-weight:900;color:var(--info)">${formatAmountHTML(totalFees)}</div>
+                    <div style="font-size:2em;font-weight:900;color:var(--info)">${totalFees.toLocaleString('ar-IQ')} د.ع</div>
                 </div>
             </div>
             
@@ -4848,15 +4698,15 @@ function showLawyerFullReport(lawyerId) {
             <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-bottom:25px">
                 <div style="background:var(--bg);padding:20px;border-radius:12px;border:2px solid var(--success)">
                     <div style="color:var(--text-light);font-size:0.9em;margin-bottom:8px">💰 الإيرادات من القضايا</div>
-                    <div style="font-size:1.6em;font-weight:900;color:var(--success)">${formatAmountHTML(caseIncome)}</div>
+                    <div style="font-size:1.8em;font-weight:900;color:var(--success)">${caseIncome.toLocaleString('ar-IQ')} د.ع</div>
                 </div>
                 <div style="background:var(--bg);padding:20px;border-radius:12px;border:2px solid var(--danger)">
                     <div style="color:var(--text-light);font-size:0.9em;margin-bottom:8px">💸 المصروفات على القضايا</div>
-                    <div style="font-size:1.8em;font-weight:900;color:var(--danger)">${formatAmountHTML(caseExpense)}</div>
+                    <div style="font-size:1.8em;font-weight:900;color:var(--danger)">${caseExpense.toLocaleString('ar-IQ')} د.ع</div>
                 </div>
                 <div style="background:var(--bg);padding:20px;border-radius:12px;border:2px solid var(--primary)">
                     <div style="color:var(--text-light);font-size:0.9em;margin-bottom:8px">📈 صافي ربح القضايا</div>
-                    <div style="font-size:1.8em;font-weight:900;color:var(--primary)">${formatAmountHTML(caseIncome - caseExpense)}</div>
+                    <div style="font-size:1.8em;font-weight:900;color:var(--primary)">${(caseIncome - caseExpense).toLocaleString('ar-IQ')} د.ع</div>
                 </div>
             </div>
             
@@ -4875,7 +4725,7 @@ function showLawyerFullReport(lawyerId) {
                                 <span class="status-${c.status}">${getStatusText(c.status)}</span>
                             </div>
                             <div style="color:var(--text-light);font-size:0.9em">
-                                📋 ${c.caseNumber} • 👤 ${c.client} • 💰 ${formatAmountHTML(parseFloat(c.fees || 0))}
+                                📋 ${c.caseNumber} • 👤 ${c.client} • 💰 ${parseFloat(c.fees || 0).toLocaleString('ar-IQ')} د.ع
                             </div>
                         </div>
                     `).join('')}
@@ -4986,7 +4836,7 @@ function showLawyerFinancials(lawyerId) {
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px;">
                 <div style="padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 12px; text-align: center;">
                     <div style="font-size: 0.9em; margin-bottom: 5px;">💵 الراتب الشهري</div>
-                    <div style="font-size: 1.6em; font-weight: bold;">${formatAmountHTML(lawyer.salary || 0)}</div>
+                    <div style="font-size: 1.6em; font-weight: bold;">${(lawyer.salary || 0).toLocaleString('ar-IQ')} د.ع</div>
                 </div>
                 <div style="padding: 15px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border-radius: 12px; text-align: center;">
                     <div style="font-size: 0.9em; margin-bottom: 5px;">⚖️ عدد القضايا</div>
@@ -4994,7 +4844,7 @@ function showLawyerFinancials(lawyerId) {
                 </div>
                 <div class="${balanceClass}">
                     <div style="font-size: 0.9em; margin-bottom: 5px;">📊 الرصيد الحالي</div>
-                    <div style="font-size: 1.6em; font-weight: bold;">${formatAmountHTML(Math.abs(balance))}</div>
+                    <div style="font-size: 1.6em; font-weight: bold;">${Math.abs(balance).toLocaleString('ar-IQ')} د.ع</div>
                     <div style="font-size: 0.85em;">${balanceText}</div>
                 </div>
             </div>
@@ -5003,12 +4853,12 @@ function showLawyerFinancials(lawyerId) {
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px;">
                 <div style="padding: 15px; background: var(--success); color: white; border-radius: 10px; text-align: center;">
                     <div style="font-size: 0.85em;">💰 إجمالي الإيرادات</div>
-                    <div style="font-size: 1.3em; font-weight: bold;">${formatAmountHTML(totalIncome)}</div>
+                    <div style="font-size: 1.5em; font-weight: bold;">${totalIncome.toLocaleString('ar-IQ')} د.ع</div>
                     <small style="font-size: 0.75em;">جميع الإيرادات (قضايا + عام)</small>
                 </div>
                 <div style="padding: 15px; background: var(--danger); color: white; border-radius: 10px; text-align: center;">
                     <div style="font-size: 0.85em;">💸 إجمالي المصروفات</div>
-                    <div style="font-size: 1.3em; font-weight: bold;">${formatAmountHTML(totalExpense)}</div>
+                    <div style="font-size: 1.5em; font-weight: bold;">${totalExpense.toLocaleString('ar-IQ')} د.ع</div>
                     <small style="font-size: 0.75em;">جميع المصروفات (قضايا + عام)</small>
                 </div>
             </div>
@@ -5019,15 +4869,15 @@ function showLawyerFinancials(lawyerId) {
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
                     <div style="background: white; padding: 15px; border-radius: 10px; text-align: center;">
                         <div style="font-size: 0.85em; color: #666;">💵 إيرادات القضايا</div>
-                        <div style="font-size: 1.3em; font-weight: bold; color: var(--success);">${formatAmountHTML(totalCasesFees)}</div>
+                        <div style="font-size: 1.3em; font-weight: bold; color: var(--success);">${totalCasesFees.toLocaleString('ar-IQ')} د.ع</div>
                     </div>
                     <div style="background: white; padding: 15px; border-radius: 10px; text-align: center;">
                         <div style="font-size: 0.85em; color: #666;">💸 مصروفات القضايا</div>
-                        <div style="font-size: 1.3em; font-weight: bold; color: var(--danger);">${formatAmountHTML(totalCasesExpenses)}</div>
+                        <div style="font-size: 1.3em; font-weight: bold; color: var(--danger);">${totalCasesExpenses.toLocaleString('ar-IQ')} د.ع</div>
                     </div>
                     <div style="background: white; padding: 15px; border-radius: 10px; text-align: center;">
                         <div style="font-size: 0.85em; color: #666;">📊 صافي الربح</div>
-                        <div style="font-size: 1.3em; font-weight: bold; color: ${netCasesProfit >= 0 ? 'var(--success)' : 'var(--danger)'};">${formatAmountHTML(netCasesProfit)}</div>
+                        <div style="font-size: 1.3em; font-weight: bold; color: ${netCasesProfit >= 0 ? 'var(--success)' : 'var(--danger)'};">${netCasesProfit.toLocaleString('ar-IQ')} د.ع</div>
                     </div>
                 </div>
             </div>
@@ -5077,10 +4927,10 @@ function showLawyerFinancials(lawyerId) {
                                     <td>${c.title}</td>
                                     <td>${c.client || '-'}</td>
                                     <td><span class="status-${c.status}">${getStatusText(c.status)}</span></td>
-                                    <td class="transaction-income">${formatAmountHTML(caseIncome)}</td>
-                                    <td class="transaction-expense">${formatAmountHTML(caseExpense)}</td>
+                                    <td class="transaction-income">${caseIncome.toLocaleString('ar-IQ')} د.ع</td>
+                                    <td class="transaction-expense">${caseExpense.toLocaleString('ar-IQ')} د.ع</td>
                                     <td class="${caseNet >= 0 ? 'transaction-income' : 'transaction-expense'}">
-                                        <strong>${formatAmountHTML(caseNet)}</strong>
+                                        <strong>${caseNet.toLocaleString('ar-IQ')} د.ع</strong>
                                     </td>
                                 </tr>
                             `}).join('')}
@@ -5109,7 +4959,7 @@ function showLawyerFinancials(lawyerId) {
                                     <td>${getTransactionTypeText(t.type)}</td>
                                     <td>${t.caseNumber ? `<strong>${t.caseNumber}</strong>` : '-'}</td>
                                     <td class="${t.type.includes('payment') || t.type.includes('salary') || t.type === 'expense' ? 'transaction-expense' : 'transaction-income'}">
-                                        <strong>${formatAmountHTML(parseFloat(t.amount))}</strong>
+                                        <strong>${parseFloat(t.amount).toLocaleString('ar-IQ')} د.ع</strong>
                                     </td>
                                     <td>${t.description || t.notes || '-'}</td>
                                 </tr>
@@ -5192,8 +5042,8 @@ function getTransactionTypeText(type) {
     const types = {
         'income': 'إيراد',
         'expense': 'مصروف',
-        'payment_from_client': 'دفعة من موكل',
-        'payment_to_client': 'دفعة لموكل',
+        'payment_from_client': 'دفعة من عميل',
+        'payment_to_client': 'دفعة لعميل',
         'service_fee': 'أتعاب خدمة',
         'salary': 'راتب',
         'commission': 'عمولة',
@@ -5221,8 +5071,8 @@ function loadLawyers() {
             <td><strong>${l.name}</strong></td>
             <td>${l.license || '-'}</td>
             <td>${l.specialty || '-'}</td>
-            <td>${formatAmountHTML(l.salary || 0)}</td>
-            <td class="${balanceClass}"><strong>${formatAmountHTML(balance)}</strong></td>
+            <td>${(l.salary || 0).toLocaleString('ar-IQ')} د.ع</td>
+            <td class="${balanceClass}"><strong>${balance.toLocaleString('ar-IQ')} د.ع</strong></td>
             <td>${l.phone || '-'}</td>
             <td>
                 <div class="action-btns">
@@ -5239,13 +5089,13 @@ function loadLawyers() {
     table.innerHTML += `
         <tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; font-weight: bold;">
             <td colspan="4" style="text-align: center;">📊 الملخص المالي الإجمالي</td>
-            <td>${formatAmountHTML(summary.totalSalaries)}</td>
+            <td>${summary.totalSalaries.toLocaleString('ar-IQ')} د.ع</td>
             <td class="${summary.netBalance > 0 ? 'status-active' : summary.netBalance < 0 ? 'status-closed' : ''}">
-                ${formatAmountHTML(summary.netBalance)}
+                ${summary.netBalance.toLocaleString('ar-IQ')} د.ع
             </td>
             <td colspan="2" style="font-size: 0.85em;">
-                <div>دائن: ${formatAmountHTML(summary.totalCreditor)}</div>
-                <div>مدين: ${formatAmountHTML(summary.totalDebtor)}</div>
+                <div>دائن: ${summary.totalCreditor.toLocaleString('ar-IQ')} د.ع</div>
+                <div>مدين: ${summary.totalDebtor.toLocaleString('ar-IQ')} د.ع</div>
             </td>
         </tr>
     `;
@@ -5265,36 +5115,19 @@ function filterLawyers() {
 // اختيار المحامي تلقائياً من القضية
 // ==================== إدارة المدينين والدائنين ====================
 function saveExchangeRate() {
-    const rate = parseFloat(document.getElementById('debtorExchangeRate')?.value || 1450);
+    const rate = parseFloat(document.getElementById('exchangeRate')?.value || 1450);
     database.exchangeRate = rate;
-    // أي تعديل يدوي يعطل المزامنة التلقائية
-    database.syncDebtorRate = false;
     saveData();
     renderDebtorsCreditors();
     showToast('✅ تم حفظ سعر الصرف', 'success');
 }
 
-function setDebtorDisplayCurrency(val) {
-    database.debtorsDisplayCurrency = (val === 'USD') ? 'USD' : 'IQD';
-    saveData();
-    renderDebtorsCreditors();
-}
-
 function renderDebtorsCreditors() {
-    // مزامنة تلقائية مع الإعداد العام إن لم يوجد تفضيل محلي
-    const globalRate = (database.currencySettings?.exchangeRate) ?? 1450;
-    if (database.syncDebtorRate !== false && (!database.exchangeRate || Number.isNaN(database.exchangeRate))) {
-        database.exchangeRate = globalRate;
+    const rate = database.exchangeRate || parseFloat(document.getElementById('exchangeRate')?.value) || 1450;
+    if (database.exchangeRate) {
+        const input = document.getElementById('exchangeRate');
+        if (input) input.value = database.exchangeRate;
     }
-    const rate = database.exchangeRate || globalRate;
-    const input = document.getElementById('debtorExchangeRate');
-    if (input) input.value = rate;
-    // تعيين قيمة المبدّل
-    const dispSel = document.getElementById('debtorDisplayCurrency');
-    if (dispSel) dispSel.value = database.debtorsDisplayCurrency === 'USD' ? 'USD' : 'IQD';
-    // زر المزامنة
-    const syncBtn = document.getElementById('debtorSyncToggle');
-    if (syncBtn) syncBtn.textContent = `🔄 مزامنة تلقائية: ${database.syncDebtorRate === false ? 'معطلة' : 'مفعلة'}`;
     
     // الحصول على الفلاتر
     const filterType = document.getElementById('debtorFilter')?.value || 'all';
@@ -5342,11 +5175,6 @@ function renderDebtorsCreditors() {
     
     // تحديث الإحصائيات
     updateDebtorsStats(debtors, creditors, rate);
-
-    // آخر تحديث في ترويسة القسم + شارة رأسية إن وُجدت
-    const lu = document.getElementById('debtorsLastUpdated');
-    if (lu) lu.textContent = `🕒 آخر تحديث: ${new Date().toLocaleString('ar-IQ')}`;
-    updateLastUpdated('debtors');
     
     // عرض المدينين بالدينار
     const debtorsIQD = document.getElementById('debtorsListIQD');
@@ -5477,24 +5305,6 @@ function renderDebtorsCreditors() {
     }
 }
 
-function toggleDebtorRateSync() {
-    const globalRate = (database.currencySettings?.exchangeRate) ?? 1450;
-    const nowState = database.syncDebtorRate === false ? false : true;
-    const newState = !nowState;
-    database.syncDebtorRate = newState;
-    if (newState) {
-        // تفعيل المزامنة: نسحب السعر من الإعداد العام
-        database.exchangeRate = globalRate;
-        const input = document.getElementById('debtorExchangeRate');
-        if (input) input.value = globalRate;
-        showToast('🔄 تم تفعيل المزامنة مع الإعداد العام', 'success');
-    } else {
-        showToast('⏸️ تم إيقاف المزامنة التلقائية لهذا القسم', 'warning');
-    }
-    saveData();
-    renderDebtorsCreditors();
-}
-
 function updateDebtorsStats(debtors, creditors, rate) {
     const totalDebtorsAmount = debtors.reduce((sum, c) => sum + c.balance, 0);
     const totalCreditorsAmount = creditors.reduce((sum, c) => sum + Math.abs(c.balance), 0);
@@ -5505,19 +5315,9 @@ function updateDebtorsStats(debtors, creditors, rate) {
     const amountElem2 = document.getElementById('totalCreditorsAmount');
     
     if (countElem1) countElem1.textContent = debtors.length;
-    if (amountElem1) {
-        const disp = database.debtorsDisplayCurrency === 'USD' ? 'USD' : 'IQD';
-        amountElem1.innerHTML = (disp === 'USD')
-            ? `$${(totalDebtorsAmount / rate).toFixed(2)}<br><span style="font-size:0.75em">${totalDebtorsAmount.toLocaleString('ar-IQ')} د.ع</span>`
-            : `${totalDebtorsAmount.toLocaleString('ar-IQ')} د.ع<br><span style="font-size:0.75em">$${(totalDebtorsAmount / rate).toFixed(2)}</span>`;
-    }
+    if (amountElem1) amountElem1.innerHTML = `${totalDebtorsAmount.toLocaleString('ar-IQ')} د.ع<br><span style="font-size:0.75em">$${(totalDebtorsAmount / rate).toFixed(2)}</span>`;
     if (countElem2) countElem2.textContent = creditors.length;
-    if (amountElem2) {
-        const disp = database.debtorsDisplayCurrency === 'USD' ? 'USD' : 'IQD';
-        amountElem2.innerHTML = (disp === 'USD')
-            ? `$${(totalCreditorsAmount / rate).toFixed(2)}<br><span style="font-size:0.75em">${totalCreditorsAmount.toLocaleString('ar-IQ')} د.ع</span>`
-            : `${totalCreditorsAmount.toLocaleString('ar-IQ')} د.ع<br><span style="font-size:0.75em">$${(totalCreditorsAmount / rate).toFixed(2)}</span>`;
-    }
+    if (amountElem2) amountElem2.innerHTML = `${totalCreditorsAmount.toLocaleString('ar-IQ')} د.ع<br><span style="font-size:0.75em">$${(totalCreditorsAmount / rate).toFixed(2)}</span>`;
 }
 
 function showClientTransactions(clientId) {
@@ -5531,7 +5331,7 @@ function showClientTransactions(clientId) {
         <div style="margin-bottom:15px">
             <strong>👤 الزبون:</strong> ${client.name}<br>
             <strong>📞 الهاتف:</strong> ${client.phone}<br>
-            <strong>💰 الرصيد:</strong> <span style="color:${calculateClientBalance(client.name) > 0 ? 'var(--danger)' : 'var(--success)'};font-weight:bold">${formatAmountHTML(calculateClientBalance(client.name))}</span>
+            <strong>💰 الرصيد:</strong> <span style="color:${calculateClientBalance(client.name) > 0 ? 'var(--danger)' : 'var(--success)'};font-weight:bold">${calculateClientBalance(client.name).toLocaleString('ar-IQ')} د.ع</span>
         </div>
         
         ${transactions.length > 0 ? `
@@ -5551,7 +5351,7 @@ function showClientTransactions(clientId) {
                                 <td>${new Date(t.date).toLocaleDateString('ar-IQ')}</td>
                                 <td>${getTransactionTypeText(t.type)}</td>
                                 <td class="${t.type === 'payment_from_client' ? 'transaction-income' : 'transaction-expense'}">
-                                    ${formatAmountHTML(parseFloat(t.amount))}
+                                    ${parseFloat(t.amount).toLocaleString('ar-IQ')} د.ع
                                 </td>
                                 <td>${t.description || '-'}</td>
                             </tr>
@@ -5581,7 +5381,7 @@ function quickPayment(clientId, type) {
         <form id="quickPaymentForm" onsubmit="saveQuickPayment(event, ${clientId}, '${transactionType}')">
             <div style="background:var(--bg);padding:15px;border-radius:8px;margin-bottom:15px">
                 <strong>👤 الزبون:</strong> ${client.name}<br>
-                <strong>💰 الرصيد الحالي:</strong> <span style="color:${calculateClientBalance(client.name) > 0 ? 'var(--danger)' : 'var(--success)'}">${formatAmountHTML(calculateClientBalance(client.name))}</span>
+                <strong>💰 الرصيد الحالي:</strong> <span style="color:${calculateClientBalance(client.name) > 0 ? 'var(--danger)' : 'var(--success)'}">${calculateClientBalance(client.name).toLocaleString('ar-IQ')} د.ع</span>
             </div>
             
             <div class="form-group">
@@ -5728,7 +5528,6 @@ function initializeApp() {
             renderClients();
             renderTransactions();
             setupUXEnhancements();
-            applyCompactModeFromStorage?.();
             return;
         } catch (e) {
             console.warn('⚠️ جلسة تالفة - يتم مسح البيانات');
@@ -5741,16 +5540,10 @@ function initializeApp() {
     
     // بدء من الصفر - عرض شاشة تسجيل الدخول
     console.log('🔐 عرض شاشة تسجيل الدخول');
+    document.body.classList.add('login-active');
     loadData();
     initializeLoginForm();
 }
-
-// ربط تبديل الوضع المضغوط من إعدادات المظهر
-document.addEventListener('change', (e) => {
-    if (e.target && e.target.id === 'compactModeToggle') {
-        setCompactMode(!!e.target.checked);
-    }
-});
 
 // تشغيل عند تحميل الصفحة
 if (document.readyState === 'loading') {
